@@ -291,28 +291,28 @@ export function ORTFCanvas() {
             id="history_canvas"
             height={windowDimensions.height}
             width={windowDimensions.width}
-            style="position: absolute; width: 100%; height: 100%; filter: blur(1.5px) grayscale(80%);"
+            style="position: absolute; width: 100%; height: 100%; filter: blur(1.5px) grayscale(80%); z-index:0;"
             ref={HistoryCanvasRef}
         ></canvas>   
         <canvas 
             id="effects_snow"
             height={windowDimensions.height}
             width={windowDimensions.width}
-            style="position: absolute; width: 100%; height: 100%; background: transparent; opacity: 1;"
+            style="position: absolute; width: 100%; height: 100%; z-index:1; opacity: 1;"
             ref={EffectSnowCanvasRef}
         ></canvas>
         <canvas 
             id="effects_vcr"
             height={windowDimensions.height}
             width={windowDimensions.width}
-            style="position: absolute; width: 100%; height: 100%; opacity: 1;"
+            style="position: absolute; width: 100%; height: 100%; z-index:2; opacity: 1;"
             ref={EffectVCRCanvasRef}
         ></canvas>     
         <canvas 
             id="crt"
             height={windowDimensions.height}
             width={windowDimensions.width}
-            style="position: absolute; width: 100%; height: 100%; opacity: 1;"
+            style="position: absolute; width: 100%; height: 100%; z-index:3; opacity: 1;"
             ref={CrtCanvasRef}
         ></canvas>   
         </>      
