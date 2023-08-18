@@ -38,7 +38,7 @@ interface ivcr {
  * DEV
  * 0 = prod |  300 = show hydration dev mode
  */
-const DEV_SHOW_HYDRATION = 50
+const DEV_SHOW_HYDRATION = 0
 
 interface Iassets {
     name: string,
@@ -49,7 +49,7 @@ interface Iassets {
 const assets: Iassets[] = [
     {
         name: "tank",
-        url: "/char.jpeg",
+        url: "/char1.jpeg",
         image: null
     },
     {
@@ -111,13 +111,13 @@ export function ORTFCanvas() {
         HistoryCanvasCTX.drawImage(
             assets[0].image , 0, 0, assets[0].image.width, assets[0].image.height, 
             0, 0, windowDimensions.width, windowDimensions.height)
-        
-        CrtCanvasCTX.drawImage(
+
+        /*CrtCanvasCTX.drawImage(
             assets[1].image , 0, 0, assets[1].image.width, assets[1].image.height, 
             0, 0, windowDimensions.width, windowDimensions.height)
-        
-        generateSnow()
-        generateVCRNoise()        
+   */
+       // generateSnow()
+        //generateVCRNoise() 
         EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
     }
 
