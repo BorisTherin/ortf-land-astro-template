@@ -71,14 +71,14 @@ export function ORTFCanvas() {
     let toggleHistoryCanvasEvent = true
 
     // CONFIG VARS
-    const vcr_opacity = 0.7
+    const vcr_opacity = 0.9
     const snow_opacity = 0.3
     const vcrConfig: configvcr = { 
         fps: 70,
-        miny: 1, 
+        miny: 100, 
         maxy: getWindowDimensions().height, 
-        miny2: 100,
-        num: 103,
+        miny2: 30,
+        num: 25,
         blur: 1.5
     } 
 
@@ -102,15 +102,12 @@ export function ORTFCanvas() {
 
     function drawBackgroundImage() {
         cancelAnimationFrame(EffectsCanvas_rqAF) 
-        //console.log(EffectsCanvas_rqAF)
         windowDimensions = getWindowDimensions()
-        //console.log(assets[0].image)
         HistoryCanvasCTX.drawImage(assets[0].image , 0, 0, assets[0].image.width, assets[0].image.height, 0, 0, windowDimensions.width, windowDimensions.height)
         
         CrtCanvasCTX.drawImage(assets[1].image , 0, 0, assets[1].image.width, assets[1].image.height, 0, 0, windowDimensions.width, windowDimensions.height)
         generateSnow()
-        generateVCRNoise()
-        
+        generateVCRNoise()        
         EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
     }
 
@@ -160,8 +157,8 @@ export function ORTFCanvas() {
         const canvas = effects.vcr.node;
         const config = effects.vcr.config;
         const div = effects.vcr.node;
-        renderTrackingNoise();
-        /*
+        //renderTrackingNoise();
+
         if ( config.fps >= 60 ) {
             cancelAnimationFrame(vcrInterval);
             const animate = () => {
@@ -176,7 +173,7 @@ export function ORTFCanvas() {
                 renderTrackingNoise();
             }, 1000 / config.fps);
         }
-        */
+
     }
     
     // Generate CRT noise
@@ -299,21 +296,21 @@ export function ORTFCanvas() {
             id="effects_snow"
             height={windowDimensions.height}
             width={windowDimensions.width}
-            style="position: absolute; width: 100%; height: 100%; z-index:0; opacity: 1;"
+            style="position: absolute; width: 100%; height: 100%; z-index:1; opacity: 1;"
             ref={EffectSnowCanvasRef}
         ></canvas>
         <canvas 
             id="effects_vcr"
             height={windowDimensions.height}
             width={windowDimensions.width}
-            style="position: absolute; width: 100%; height: 100%; z-index:0 opacity: 1;"
+            style="position: absolute; width: 100%; height: 100%; z-index:2 opacity: 1;"
             ref={EffectVCRCanvasRef}
         ></canvas>     
         <canvas 
             id="crt"
             height={windowDimensions.height}
             width={windowDimensions.width}
-            style="position: absolute; width: 100%; height: 100%; z-index:0; opacity: 1;"
+            style="position: absolute; width: 100%; height: 100%; z-index:3; opacity: 1;"
             ref={CrtCanvasRef}
         ></canvas>   
         </div>      
