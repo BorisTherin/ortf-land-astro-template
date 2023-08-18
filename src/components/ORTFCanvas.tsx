@@ -101,21 +101,21 @@ export function ORTFCanvas() {
     }
 
     function drawBackgroundImage() {
-        console.log("drawBackgroundImage")
         cancelAnimationFrame(EffectsCanvas_rqAF) 
         windowDimensions = getWindowDimensions()
         HistoryCanvasCTX.drawImage(assets[0].image , 0, 0, assets[0].image.width, assets[0].image.height, 0, 0, windowDimensions.width, windowDimensions.height)
         CrtCanvasCTX.drawImage(assets[1].image , 0, 0, assets[1].image.width, assets[1].image.height, 0, 0, windowDimensions.width, windowDimensions.height)
-        EffectsCanvas_rqAF = requestAnimationFrame(drawEffects)
+        generateSnow()
+        generateVCRNoise()
+        EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
     }
 
     function drawEffects() {
-        cancelAnimationFrame(EffectsCanvas_rqAF)
+        //cancelAnimationFrame(EffectsCanvas_rqAF)
         // console.log("drawEffects")
-        EffectSnowCanvasCTX.clearRect(0,0,windowDimensions.width,windowDimensions.height)
         generateSnow()
         generateVCRNoise()
-        EffectsCanvas_rqAF = requestAnimationFrame(drawEffects)
+        //EffectsCanvas_rqAF = requestAnimationFrame(drawEffects)
     }
 
     const handleHistoryCanvasResize = () => {
@@ -183,7 +183,7 @@ export function ORTFCanvas() {
     
     // Generate CRT noise
     function generateSnow() {
-
+        //EffectSnowCanvasCTX.clearRect(0,0,windowDimensions.width,windowDimensions.height)
         var w = EffectSnowCanvasCTX.canvas.width,
             h = EffectSnowCanvasCTX.canvas.height,
             d = EffectSnowCanvasCTX.createImageData(w, h),
@@ -286,7 +286,7 @@ export function ORTFCanvas() {
     }, [])
 
     return (
-        <>
+        <div>
         <canvas 
             id="history_canvas"
             height={windowDimensions.height}
@@ -315,6 +315,6 @@ export function ORTFCanvas() {
             style="position: absolute; width: 100%; height: 100%; z-index:3; opacity: 1;"
             ref={CrtCanvasRef}
         ></canvas>   
-        </>      
+        </div>      
     )
 }
