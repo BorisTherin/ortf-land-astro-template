@@ -14,11 +14,11 @@ const sizes = "(min-width: 640px) 42vw, 67vw";
 ---
 
 <section class="relative h-full bg-black">
-  <ORTFCanvas client:load />
+  <ORTFCanvas client:only="preact" />
   <GitHubCorner />
 
   <div class="relative grid h-full place-items-center sm:grid-cols-2">
-    {<!-- <TwitchPlayer client:only="preact" /> -->}
+     <TwitchPlayer client:only="preact" /> 
   </div>
 </section>
 
