@@ -7,7 +7,7 @@ export function TwitchPlayer() {
         <>
          {//<!-- Add a placeholder for the Twitch embed -->
          }
-        <div id="twitch-embed" class="absolute" style="opacity: 0.3; z-index:4;"></div>
+        <div id="twitch-embed" class="absolute" style="opacity: 0.3; z-index:5;"></div>
         
         {//<!-- Load the Twitch embed script -->
         //<!-- Create a Twitch.Embed object that will render within the "twitch-embed" element. -->

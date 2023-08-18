@@ -103,9 +103,14 @@ export function ORTFCanvas() {
     function drawBackgroundImage() {
         cancelAnimationFrame(EffectsCanvas_rqAF) 
         windowDimensions = getWindowDimensions()
-        HistoryCanvasCTX.drawImage(assets[0].image , 0, 0, assets[0].image.width, assets[0].image.height, 0, 0, windowDimensions.width, windowDimensions.height)
+        HistoryCanvasCTX.drawImage(
+            assets[0].image , 0, 0, assets[0].image.width, assets[0].image.height, 
+            0, 0, windowDimensions.width, windowDimensions.height)
         
-        CrtCanvasCTX.drawImage(assets[1].image , 0, 0, assets[1].image.width, assets[1].image.height, 0, 0, windowDimensions.width, windowDimensions.height)
+        CrtCanvasCTX.drawImage(
+            assets[1].image , 0, 0, assets[1].image.width, assets[1].image.height, 
+            0, 0, windowDimensions.width, windowDimensions.height)
+        
         generateSnow()
         generateVCRNoise()        
         EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
@@ -195,7 +200,7 @@ export function ORTFCanvas() {
     function renderTrackingNoise(radius:number = 2, xmax?: number, ymax?: number) {
         
         const canvas = EffectVCRCanvasRef.current //effects.vcr.node;
-        const ctx = canvas.getContext('2d') // effects.vcr.ctx; CTX = canvasRef.current.getContext('2d')
+        //const ctx = canvas.getContext('2d') // effects.vcr.ctx; CTX = canvasRef.current.getContext('2d')
         const config = effects.vcr.config;
         let posy1 = config.miny || 0;
         let posy2 = config.maxy || canvas.height;
@@ -211,22 +216,22 @@ export function ORTFCanvas() {
         }			
         
         canvas.style.filter = `blur(${config.blur}px)`;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = `#fff`;
+        EffectVCRCanvasCTX.clearRect(0, 0, canvas.width, canvas.height);
+        EffectVCRCanvasCTX.fillStyle = `#fff`;
 
-        ctx.beginPath();
+        EffectVCRCanvasCTX.beginPath();
         for (let i:number = 0; i <= num; i++) {
             var x = Math.random() * i * xmax
             var y1 = getRandomInt(posy1+=3, posy2);
             var y2 = getRandomInt(0, posy3-=3);
-            ctx.fillRect(x, y1, radius, radius);
-            ctx.fillRect(x, y2, radius, radius);
-            ctx.fill();
+            EffectVCRCanvasCTX.fillRect(x, y1, radius, radius);
+            EffectVCRCanvasCTX.fillRect(x, y2, radius, radius);
+            EffectVCRCanvasCTX.fill();
 
-            renderTail(ctx, x, y1, radius);
-            renderTail(ctx, x, y2, radius);
+            renderTail(EffectVCRCanvasCTX, x, y1, radius);
+            renderTail(EffectVCRCanvasCTX, x, y2, radius);
         }
-        ctx.closePath();
+        EffectVCRCanvasCTX.closePath();
     }
 
     function renderTail(ctx: any, x: number, y: number, radius: number) {
@@ -240,22 +245,28 @@ export function ORTFCanvas() {
             let dx = getRandomInt(1, 4);
             radius -= 0.1;
             dx *= dir;
-            ctx.fillRect((x += dx), y, r, r);
-            ctx.fill();
+            EffectVCRCanvasCTX.fillRect((x += dx), y, r, r);
+            EffectVCRCanvasCTX.fill();
         }
     }
 
+    let useEffectCalls = 0
     useEffect(() => {
+        console.log(++useEffectCalls)
         console.log(`History Background is LOADED !!!!!!!!`)
-        if (HistoryCanvasRef.current) 
+        if (HistoryCanvasRef.current) { 
+            console.log('HistoryCanvasRef ready')
             HistoryCanvasCTX = HistoryCanvasRef.current.getContext('2d')
-        if (CrtCanvasRef.current) 
+        }if (CrtCanvasRef.current) {
+            console.log('CrtCanvasRef ready')
             CrtCanvasCTX = CrtCanvasRef.current.getContext('2d')
-        if (EffectSnowCanvasRef.current){    
+        }if (EffectSnowCanvasRef.current){  
+            console.log('EffectSnowCanvasRef ready')  
             EffectSnowCanvasRef.current.style.opacity = snow_opacity
             EffectSnowCanvasCTX = EffectSnowCanvasRef.current.getContext('2d')
         }
-        if (EffectVCRCanvasRef.current)    {
+        if (EffectVCRCanvasRef.current) {
+            console.log('EffectVCRCanvasRef ready')
             EffectVCRCanvasRef.current.style.opacity = vcr_opacity
             EffectVCRCanvasCTX = EffectVCRCanvasRef.current.getContext('2d')
         }
@@ -289,28 +300,28 @@ export function ORTFCanvas() {
             id="history_canvas"
             height={windowDimensions.height}
             width={windowDimensions.width}
-            style="position: absolute; width: 100%; height: 100%; filter: blur(1.5px) grayscale(80%); z-index:0;"
+            style="position: absolute; width: 100%; height: 100%; filter: blur(1.5px) grayscale(80%); z-index:1;"
             ref={HistoryCanvasRef}
         ></canvas>   
         <canvas 
             id="effects_snow"
             height={windowDimensions.height}
             width={windowDimensions.width}
-            style="position: absolute; width: 100%; height: 100%; z-index:1; opacity: 1;"
+            style="position: absolute; width: 100%; height: 100%; z-index:2; opacity: 1;"
             ref={EffectSnowCanvasRef}
         ></canvas>
         <canvas 
             id="effects_vcr"
             height={windowDimensions.height}
             width={windowDimensions.width}
-            style="position: absolute; width: 100%; height: 100%; z-index:2 opacity: 1;"
+            style="position: absolute; width: 100%; height: 100%; z-index:3; opacity: 1;"
             ref={EffectVCRCanvasRef}
         ></canvas>     
         <canvas 
             id="crt"
             height={windowDimensions.height}
             width={windowDimensions.width}
-            style="position: absolute; width: 100%; height: 100%; z-index:3; opacity: 1;"
+            style="position: absolute; width: 100%; height: 100%; z-index:4; opacity: 1;"
             ref={CrtCanvasRef}
         ></canvas>   
         </div>      
