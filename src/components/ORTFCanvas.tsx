@@ -1,5 +1,5 @@
-import {  } from "preact"
 import { useRef, useEffect } from "preact/hooks"
+import { h } from "preact"
 
 interface size {
     width: number,
@@ -85,7 +85,7 @@ export function ORTFCanvas() {
     let effects: ivcr = {
         vcr : { 
             node: EffectSnowCanvasRef.current, 
-            EffectVCRCanvasCTX,  
+            ctx: EffectVCRCanvasCTX,  
             config: vcrConfig
         }
     };
@@ -102,20 +102,17 @@ export function ORTFCanvas() {
 
     function drawBackgroundImage() {
         cancelAnimationFrame(EffectsCanvas_rqAF) 
+        //console.log(EffectsCanvas_rqAF)
         windowDimensions = getWindowDimensions()
         HistoryCanvasCTX.drawImage(assets[0].image , 0, 0, assets[0].image.width, assets[0].image.height, 0, 0, windowDimensions.width, windowDimensions.height)
-        CrtCanvasCTX.drawImage(assets[1].image , 0, 0, assets[1].image.width, assets[1].image.height, 0, 0, windowDimensions.width, windowDimensions.height)
-        generateSnow()
-        generateVCRNoise()
+        
+        if (EffectsCanvas_rqAF > 4) {
+            CrtCanvasCTX.drawImage(assets[1].image , 0, 0, assets[1].image.width, assets[1].image.height, 0, 0, windowDimensions.width, windowDimensions.height)
+            generateSnow()
+            generateVCRNoise()
+        }
+        
         EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
-    }
-
-    function drawEffects() {
-        //cancelAnimationFrame(EffectsCanvas_rqAF)
-        // console.log("drawEffects")
-        generateSnow()
-        generateVCRNoise()
-        //EffectsCanvas_rqAF = requestAnimationFrame(drawEffects)
     }
 
     const handleHistoryCanvasResize = () => {
@@ -265,19 +262,22 @@ export function ORTFCanvas() {
             EffectVCRCanvasCTX = EffectVCRCanvasRef.current.getContext('2d')
         }
 
-        let loadedAssets = 0
-        assets.map( (img) => {
-            img.image = new Image()
-            img.image.src = img.url
-            img.image.onload = () => { 
-                console.log("loadedAsset", img.name)
-                assets[loadedAssets].image = img.image
-                if (++loadedAssets == assets.length) {
-                    EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage) 
+        if ( HistoryCanvasRef.current && CrtCanvasRef.current && EffectSnowCanvasRef.current &&EffectVCRCanvasRef.current) {
+            let loadedAssets = 0
+            assets.map( (img) => {
+                img.image = new Image()
+                img.image.src = img.url
+                img.image.onload = () => { 
+                    console.log("loadedAsset", img.name)
+                    assets[loadedAssets].image = img.image
+                    if (++loadedAssets == assets.length) {
+                        console.log('all assets loaded')
+                        EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage) 
+                    }
                 }
-            }
-        })
-        console.log(assets)
+            })
+            console.log(assets)
+        }
         
         window.addEventListener('resize', handleHistoryCanvasResize)
         document.addEventListener('scroll', handleHistoryCanvasEvents)
