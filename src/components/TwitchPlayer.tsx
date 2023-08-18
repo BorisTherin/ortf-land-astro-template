@@ -2,7 +2,27 @@ import { useRef, useEffect } from "preact/hooks"
 import { h } from 'preact'
 
 export function TwitchPlayer() {
+
+    function getWindowDimensions() {
+        const hasWindow: boolean = typeof window !== 'undefined'
+        const width: number = hasWindow ? window.innerWidth : 0
+        const height: number = hasWindow ? window.innerHeight : 0
+        return {
+            width,
+            height,
+        }
+    }
     
+    let { width, height } = { width: 0, height: 0 }
+    let windowDimensions = getWindowDimensions()
+    if (windowDimensions.width < 450) {
+          width = 400
+          height = 500
+    } else {
+        width = 800
+        height = 400
+    }
+
     return (
         <>
          {//<!-- Add a placeholder for the Twitch embed -->
@@ -26,8 +46,8 @@ export function TwitchPlayer() {
                 // original Twitch-Obj calls as a start function
                 'function startTwitchPlayer() { '+
                 'var embed = new Twitch.Embed(\'twitch-embed\', {'+
-                'width: 854,'+
-                'height: 480,'+
+                'width: '+width+','+
+                'height: '+height+','+
                 'channel: \'radiojaune\','+
                 'layout: \'video-and-chat\','+
                 'autoplay: false,'+
@@ -39,9 +59,13 @@ export function TwitchPlayer() {
                 'embed.addEventListener(Twitch.Embed.VIDEO_PLAY, () => {'+
                 'document.getElementById(\'twitch-embed\').style.opacity = 1;'+
                 '});'+
+                'window.addEventListener(\'resize\', () => {'+
+                'document.getElementById(\'twitch-embed\').getElementsByTagName(\'iframe\')[0].width = window.innerWidth/1.5;'+
+                'document.getElementById(\'twitch-embed\').getElementsByTagName(\'iframe\')[0].height = window.innerHeight/2;'+
+                '});'+
                 '})};'
             )}
-        </>      
+        </>
     )
 }
 

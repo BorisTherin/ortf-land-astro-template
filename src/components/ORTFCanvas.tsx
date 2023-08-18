@@ -1,3 +1,9 @@
+/**
+ * inspired by from https://codepen.io/Mobius1/pen/ZNgwbr
+ * migrated to typescript
+ * migrated to tsx preact component
+ */
+
 import { useRef, useEffect } from "preact/hooks"
 import { h } from "preact"
 
@@ -102,7 +108,6 @@ export function ORTFCanvas() {
 
     function drawBackgroundImage() {
         cancelAnimationFrame(EffectsCanvas_rqAF) 
-        windowDimensions = getWindowDimensions()
         HistoryCanvasCTX.drawImage(
             assets[0].image , 0, 0, assets[0].image.width, assets[0].image.height, 
             0, 0, windowDimensions.width, windowDimensions.height)
@@ -168,16 +173,16 @@ export function ORTFCanvas() {
             cancelAnimationFrame(vcrInterval);
             const animate = () => {
                 renderTrackingNoise();
-                vcrInterval = requestAnimationFrame(animate);
+                //vcrInterval = requestAnimationFrame(animate);
             };
             
             animate();
-        } else {
+        } /* else {
             clearInterval(vcrInterval);
             vcrInterval = setInterval(() => {
                 renderTrackingNoise();
             }, 1000 / config.fps);
-        }
+        } */
 
     }
     
@@ -295,7 +300,7 @@ export function ORTFCanvas() {
     }, [])
 
     return (
-        <div>
+        <div id="screen">
         <canvas 
             id="history_canvas"
             height={windowDimensions.height}
