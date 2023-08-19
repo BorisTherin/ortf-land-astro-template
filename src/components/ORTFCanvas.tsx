@@ -5,7 +5,7 @@
  */
 
 import { useRef, useEffect } from "preact/hooks"
-import { h } from "preact"
+// import { h } from "preact"
 
 interface size {
     width: number,
@@ -112,12 +112,12 @@ export function ORTFCanvas() {
             assets[0].image , 0, 0, assets[0].image.width, assets[0].image.height, 
             0, 0, windowDimensions.width, windowDimensions.height)
 
-        /*CrtCanvasCTX.drawImage(
+        CrtCanvasCTX.drawImage(
             assets[1].image , 0, 0, assets[1].image.width, assets[1].image.height, 
             0, 0, windowDimensions.width, windowDimensions.height)
-   */
-       // generateSnow()
-        //generateVCRNoise() 
+ 
+        generateSnow()
+        generateVCRNoise() 
         EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
     }
 
@@ -167,23 +167,7 @@ export function ORTFCanvas() {
         const canvas = effects.vcr.node;
         const config = effects.vcr.config;
         const div = effects.vcr.node;
-        //renderTrackingNoise();
-
-        if ( config.fps >= 60 ) {
-            cancelAnimationFrame(vcrInterval);
-            const animate = () => {
-                renderTrackingNoise();
-                //vcrInterval = requestAnimationFrame(animate);
-            };
-            
-            animate();
-        } /* else {
-            clearInterval(vcrInterval);
-            vcrInterval = setInterval(() => {
-                renderTrackingNoise();
-            }, 1000 / config.fps);
-        } */
-
+        renderTrackingNoise();
     }
     
     // Generate CRT noise
