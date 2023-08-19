@@ -75,7 +75,6 @@ export function ORTFCanvas() {
     let EffectsCanvas_rqAF: number = 0   
     let vcrInterval: any = 0 
     let toggleHistoryCanvasEvent = true
-    let toResize: any = null
 
     // CONFIG VARS
     const vcr_opacity = 0.9
@@ -107,10 +106,6 @@ export function ORTFCanvas() {
         }
     }
 
-    /** 
-     * ------------------------- RequestAnimationFrame --------------------- 
-     */
-
     function drawBackgroundImage() {
         cancelAnimationFrame(EffectsCanvas_rqAF) 
         HistoryCanvasCTX.drawImage(
@@ -122,80 +117,23 @@ export function ORTFCanvas() {
             0, 0, windowDimensions.width, windowDimensions.height)
  
         generateSnow()
-        renderTrackingNoise()
+        generateVCRNoise() 
         EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
     }
 
-    /**
-     *  ----------------------------- effects --------------------------- 
-     */
-
-    function getRandomInt(min: number, max: number) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min + 1)) + min;
+    const handleHistoryCanvasResize = () => {
+        if (DEV_SHOW_HYDRATION > 0) console.log('resize')
+        windowDimensions = getWindowDimensions()
+        HistoryCanvasRef.current.height = windowDimensions.height
+        HistoryCanvasRef.current.width = windowDimensions.width    
+        EffectSnowCanvasRef.current.height = windowDimensions.height
+        EffectSnowCanvasRef.current.width = windowDimensions.width  
+        EffectVCRCanvasRef.current.height = windowDimensions.height
+        EffectVCRCanvasRef.current.width = windowDimensions.width  
+        CrtCanvasRef.current.width = windowDimensions.width 
+        CrtCanvasRef.current.height = windowDimensions.height
+        drawBackgroundImage()    
     }
-    
-    // Generate CRT noise
-    function generateSnow() {
-        var w = EffectSnowCanvasCTX.canvas.width,
-            h = EffectSnowCanvasCTX.canvas.height,
-            d = EffectSnowCanvasCTX.createImageData(w, h),
-            b = new Uint32Array(d.data.buffer),
-            len = b.length;
-
-        for (var i = 0; i < len; i++) {
-            b[i] = ((255 * Math.random()) | 0) << 24;
-        }
-
-        EffectSnowCanvasCTX.putImageData(d, 0, 0);
-    }
-
-    function renderTrackingNoise(radius:number = 2) {        
-        const canvas = EffectVCRCanvasRef.current
-        const config = effects.vcr.config
-        let posy1 = config.miny || 0
-        let posy2 = config.maxy || canvas.height
-        let posy3 = config.miny2 || 0
-        const num = config.num || 20
-
-        canvas.style.filter = `blur(${config.blur}px)`
-        EffectVCRCanvasCTX.clearRect(0, 0, canvas.width, canvas.height)
-        EffectVCRCanvasCTX.fillStyle = `#fff`
-
-        EffectVCRCanvasCTX.beginPath()
-        for (let i:number = 0; i <= num; i++) {
-            var x = Math.random() * i * canvas.width
-            var y1 = getRandomInt(posy1+=3, posy2)
-            var y2 = getRandomInt(0, posy3-=3)
-            EffectVCRCanvasCTX.fillRect(x, y1, radius, radius)
-            EffectVCRCanvasCTX.fillRect(x, y2, radius, radius)
-            EffectVCRCanvasCTX.fill()
-
-            renderTail(EffectVCRCanvasCTX, x, y1, radius)
-            renderTail(EffectVCRCanvasCTX, x, y2, radius)
-        }
-        EffectVCRCanvasCTX.closePath()
-    }
-
-    function renderTail(ctx: any, x: number, y: number, radius: number) {
-        const n = getRandomInt(1, 50)
-        const dirs = [1, -1]
-        let rd = radius
-        const dir = dirs[Math.floor(Math.random() * dirs.length)]
-        for (let i = 0; i < n; i++) {
-            const step = 0.01
-            let r = getRandomInt((rd -= step), radius)
-            let dx = getRandomInt(1, 4)
-            radius -= 0.1
-            dx *= dir
-            EffectVCRCanvasCTX.fillRect((x += dx), y, r, r)
-            EffectVCRCanvasCTX.fill()
-        }
-    }
-    /** 
-     * ----------------------------- /effects -------------------------- 
-     */
 
     function handleHistoryCanvasEvents() {
         if (DEV_SHOW_HYDRATION > 0 && toggleHistoryCanvasEvent == true) console.log("scroll")
@@ -216,26 +154,89 @@ export function ORTFCanvas() {
             toggleHistoryCanvasEvent = true
             EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
         }
+     }
+
+    function getRandomInt(min: number, max: number) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    
+    function generateVCRNoise() {            
+            // console.log("noise")
+        const canvas = effects.vcr.node;
+        const config = effects.vcr.config;
+        const div = effects.vcr.node;
+        renderTrackingNoise();
+    }
+    
+    // Generate CRT noise
+    function generateSnow() {
+        //EffectSnowCanvasCTX.clearRect(0,0,windowDimensions.width,windowDimensions.height)
+        var w = EffectSnowCanvasCTX.canvas.width,
+            h = EffectSnowCanvasCTX.canvas.height,
+            d = EffectSnowCanvasCTX.createImageData(w, h),
+            b = new Uint32Array(d.data.buffer),
+            len = b.length;
+
+        for (var i = 0; i < len; i++) {
+            b[i] = ((255 * Math.random()) | 0) << 24;
+        }
+
+        EffectSnowCanvasCTX.putImageData(d, 0, 0);
     }
 
-    const handleHistoryCanvasResize = () => {
-        if (DEV_SHOW_HYDRATION > 0) console.log('resize')
-        windowDimensions = getWindowDimensions()
-        toResize.map( (element) => {
-            element.width = windowDimensions.width 
-            element.height = windowDimensions.height
-        })
-        /*
-        HistoryCanvasRef.current.height = windowDimensions.height
-        HistoryCanvasRef.current.width = windowDimensions.width    
-        EffectSnowCanvasRef.current.height = windowDimensions.height
-        EffectSnowCanvasRef.current.width = windowDimensions.width  
-        EffectVCRCanvasRef.current.height = windowDimensions.height
-        EffectVCRCanvasRef.current.width = windowDimensions.width  
-        CrtCanvasRef.current.width = windowDimensions.width 
-        CrtCanvasRef.current.height = windowDimensions.height
-        */
-        drawBackgroundImage()    
+    function renderTrackingNoise(radius:number = 2, xmax?: number, ymax?: number) {
+        
+        const canvas = EffectVCRCanvasRef.current //effects.vcr.node;
+        //const ctx = canvas.getContext('2d') // effects.vcr.ctx; CTX = canvasRef.current.getContext('2d')
+        const config = effects.vcr.config;
+        let posy1 = config.miny || 0;
+        let posy2 = config.maxy || canvas.height;
+        let posy3 = config.miny2 || 0;
+        const num = config.num || 20;
+                
+        if ( xmax === undefined ) {
+            xmax = canvas.width;
+        }
+        
+        if ( ymax === undefined ) {
+            ymax = canvas.height;
+        }			
+        
+        canvas.style.filter = `blur(${config.blur}px)`;
+        EffectVCRCanvasCTX.clearRect(0, 0, canvas.width, canvas.height);
+        EffectVCRCanvasCTX.fillStyle = `#fff`;
+
+        EffectVCRCanvasCTX.beginPath();
+        for (let i:number = 0; i <= num; i++) {
+            var x = Math.random() * i * xmax
+            var y1 = getRandomInt(posy1+=3, posy2);
+            var y2 = getRandomInt(0, posy3-=3);
+            EffectVCRCanvasCTX.fillRect(x, y1, radius, radius);
+            EffectVCRCanvasCTX.fillRect(x, y2, radius, radius);
+            EffectVCRCanvasCTX.fill();
+
+            renderTail(EffectVCRCanvasCTX, x, y1, radius);
+            renderTail(EffectVCRCanvasCTX, x, y2, radius);
+        }
+        EffectVCRCanvasCTX.closePath();
+    }
+
+    function renderTail(ctx: any, x: number, y: number, radius: number) {
+        const n = getRandomInt(1, 50);
+        const dirs = [1, -1];
+        let rd = radius;
+        const dir = dirs[Math.floor(Math.random() * dirs.length)];
+        for (let i = 0; i < n; i++) {
+            const step = 0.01;
+            let r = getRandomInt((rd -= step), radius);
+            let dx = getRandomInt(1, 4);
+            radius -= 0.1;
+            dx *= dir;
+            EffectVCRCanvasCTX.fillRect((x += dx), y, r, r);
+            EffectVCRCanvasCTX.fill();
+        }
     }
 
     let useEffectCalls = 0
@@ -260,12 +261,6 @@ export function ORTFCanvas() {
         }
 
         if ( HistoryCanvasRef.current && CrtCanvasRef.current && EffectSnowCanvasRef.current &&EffectVCRCanvasRef.current) {
-            toResize = [
-                HistoryCanvasRef.current,
-                EffectSnowCanvasRef.current,
-                EffectVCRCanvasRef.current,
-                CrtCanvasRef.current
-            ]
             let loadedAssets = 0
             assets.map( (img) => {
                 img.image = new Image()
