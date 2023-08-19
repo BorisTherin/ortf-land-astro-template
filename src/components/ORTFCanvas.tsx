@@ -43,10 +43,10 @@ const DEV_SHOW_HYDRATION = 0
 interface Iassets {
     name: string,
     url: string,
-    image: any, 
+    image: any
 }
 
-const assets: Iassets[] = [
+const assetsToLoad: Iassets[] = [
     {
         name: "tank",
         url: "/char1.jpeg",
@@ -55,7 +55,7 @@ const assets: Iassets[] = [
     {
         name: "crt",
         url: "/crt.png",
-        image: null
+        image: null 
     }
 ]
 
@@ -73,10 +73,11 @@ export function ORTFCanvas() {
     // SCRIPT VARS
     let windowDimensions: size = getWindowDimensions()
     let EffectsCanvas_rqAF: number = 0   
-    let vcrInterval: any = 0 
+    //let vcrInterval: any = 0 
     let toggleHistoryCanvasEvent = true
     let toResize: any = null
-
+    let assets: any[] = []
+    
     // CONFIG VARS
     const vcr_opacity = 0.9
     const snow_opacity = 0.3
@@ -113,14 +114,13 @@ export function ORTFCanvas() {
 
     function drawBackgroundImage() {
         cancelAnimationFrame(EffectsCanvas_rqAF) 
+        if (EffectsCanvas_rqAF%100 == 0) console.log("image res ", [assets[0].width,assets[0].height])
         HistoryCanvasCTX.drawImage(
-            assets[0].image , 0, 0, assets[0].image.width, assets[0].image.height, 
+            assets[0] , 0, 0, assets[0].width, assets[0].height, 
             0, 0, windowDimensions.width, windowDimensions.height)
-
         CrtCanvasCTX.drawImage(
-            assets[1].image , 0, 0, assets[1].image.width, assets[1].image.height, 
-            0, 0, windowDimensions.width, windowDimensions.height)
- 
+            assets[1] , 0, 0, assets[1].width, assets[1].height, 
+            0, 0, windowDimensions.width, windowDimensions.height) 
         generateSnow()
         renderTrackingNoise()
         EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
@@ -143,11 +143,9 @@ export function ORTFCanvas() {
             d = EffectSnowCanvasCTX.createImageData(w, h),
             b = new Uint32Array(d.data.buffer),
             len = b.length;
-
         for (var i = 0; i < len; i++) {
             b[i] = ((255 * Math.random()) | 0) << 24;
         }
-
         EffectSnowCanvasCTX.putImageData(d, 0, 0);
     }
 
@@ -193,6 +191,7 @@ export function ORTFCanvas() {
             EffectVCRCanvasCTX.fill()
         }
     }
+
     /** 
      * ----------------------------- /effects -------------------------- 
      */
@@ -221,26 +220,16 @@ export function ORTFCanvas() {
     const handleHistoryCanvasResize = () => {
         if (DEV_SHOW_HYDRATION > 0) console.log('resize')
         windowDimensions = getWindowDimensions()
-        toResize.map( (element) => {
+        toResize.map( (element: any) => {
             element.width = windowDimensions.width 
             element.height = windowDimensions.height
         })
-        /*
-        HistoryCanvasRef.current.height = windowDimensions.height
-        HistoryCanvasRef.current.width = windowDimensions.width    
-        EffectSnowCanvasRef.current.height = windowDimensions.height
-        EffectSnowCanvasRef.current.width = windowDimensions.width  
-        EffectVCRCanvasRef.current.height = windowDimensions.height
-        EffectVCRCanvasRef.current.width = windowDimensions.width  
-        CrtCanvasRef.current.width = windowDimensions.width 
-        CrtCanvasRef.current.height = windowDimensions.height
-        */
         drawBackgroundImage()    
     }
 
     let useEffectCalls = 0
     useEffect(() => {
-        console.log(++useEffectCalls)
+        console.log("UseEffect call : ", ++useEffectCalls)
         console.log(`History Background is LOADED !!!!!!!!`)
         if (HistoryCanvasRef.current) { 
             console.log('HistoryCanvasRef ready')
@@ -267,13 +256,13 @@ export function ORTFCanvas() {
                 CrtCanvasRef.current
             ]
             let loadedAssets = 0
-            assets.map( (img) => {
+            assetsToLoad.map( (img) => {
                 img.image = new Image()
                 img.image.src = img.url
                 img.image.onload = () => { 
-                    console.log("loadedAsset", img.name)
-                    assets[loadedAssets].image = img.image
-                    if (++loadedAssets == assets.length) {
+                    console.log("loadedAsset "+loadedAssets, img.name)
+                    assets[loadedAssets++] = img.image
+                    if (loadedAssets == assetsToLoad.length) {
                         console.log('all assets loaded')
                         EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage) 
                     }
