@@ -6,16 +6,24 @@ export function TwitchPlayer() {
         const hasWindow: boolean = typeof window !== 'undefined'
         const width: number = hasWindow ? window.innerWidth : 0
         const height: number = hasWindow ? window.innerHeight : 0
-        return {
-            width,
-            height,
-        }
+        return { width, height }
     }
     
-    let windowDimensions = getWindowDimensions()
-  
-    const embedTwitchScript = 'const widthRatio = 1.5;'+
-    'const heightRatio = 2;'+
+    const windowDimensions = getWindowDimensions()
+    /**
+     *  CONFIG YOUR FLAVOR
+     */
+    const chatLayout = true                  // layout option [video|video-and-chat]
+    const pixelRangeToSwitchSrcOptions = 799 // minimal pixel range to fire src option replacement when chatLayout=true (TwitchPlayer constraint (800), but may change), (windowDimensions.width+1 to disable)
+    const widthRatio = 1.5                 // TwitchPlayer width screen ratio
+    const heightRatio = 2                 // TwitchPlayer height screen ratio
+    const channel = 'meninblazers'         // your channel
+    const webUrls = '"embed.example.com", "othersite.example.com"'   // your network
+    const autoplay = true              // Twitch.Embed.VIDEO_READY action
+    const verbose = true              // console feedback on|off
+
+    const embedTwitchScript = 'const widthRatio = '+widthRatio+';'+
+    'const heightRatio = '+heightRatio+';'+
     'const inject = document.createElement("script");'+
     'inject.type = "text/javascript";'+
     'inject.src = "https://embed.twitch.tv/embed/v1.js";'+
@@ -25,39 +33,40 @@ export function TwitchPlayer() {
         'embed = new Twitch.Embed("twitch-embed", {'+
             'width: '+(windowDimensions.width/1.5)+','+
             'height: '+(windowDimensions.height/2) +','+
-            'channel: "lck",'+
-            'layout: "video'+((windowDimensions.width>799)?"-and-chat":"")+'",'+
-            'parent: ["embed.example.com", "othersite.example.com"]'+
+            'channel: "'+channel+'",'+
+            'layout: "video'+((windowDimensions.width>pixelRangeToSwitchSrcOptions && chatLayout)?"-and-chat":"")+'",'+
+            'parent: ['+webUrls+']'+
         '});'+
         'embed.addEventListener(Twitch.Embed.VIDEO_READY, () => {'+
             'var player = embed.getPlayer();'+
-            'player.play();'+
-            'console.log("TwitchPlayer: VIDEO_READY");'+
+            ((autoplay)?'player.play();':'')+
+            ((verbose)?'console.log("TwitchPlayer: VIDEO_READY");':'')+
         '});'+
         'embed.addEventListener(Twitch.Embed.VIDEO_PLAY, () => {'+
             'document.getElementById("twitch-embed").style.opacity = 1;'+
-            'console.log("TwitchPlayer: VIDEO_PLAY");'+
+            'document.getElementById("calendarContainer").style.display = "none";'+
+            ((verbose)?'console.log("TwitchPlayer: VIDEO_PLAY");':'')+
         '});'+
         'const embedDiv = document.getElementById("twitch-embed");'+        
         'for (var i=0; i < embedDiv.getElementsByTagName("iframe").length; i++) {'+
             'if (embedDiv.getElementsByTagName("iframe")[i].title == "Twitch") {'+
-                'console.log("attaching resize Events on TwitchPlayer-frame["+i+"]");'+
+                ((verbose)?'console.log("attaching resize Events on TwitchPlayer-frame["+i+"]");':'')+
                 'const frameId = i;'+
+                'const chatLayout = '+chatLayout+';'+
                 'window.addEventListener("resize", () => {'+
                     'embedDiv.getElementsByTagName("iframe")[frameId].width = window.innerWidth/widthRatio;'+
                     'embedDiv.getElementsByTagName("iframe")[frameId].height = (window.innerHeight/heightRatio);'+
-                    'if (window.innerWidth < 800 && embedDiv.getElementsByTagName("iframe")[frameId].src.replace("layout=video-and-chat","layout=video") != embedDiv.getElementsByTagName("iframe")[frameId].src ) {'+
+                    'if (chatLayout && window.innerWidth < 800 && embedDiv.getElementsByTagName("iframe")[frameId].src.replace("layout=video-and-chat","layout=video") != embedDiv.getElementsByTagName("iframe")[frameId].src ) {'+
                         'embedDiv.getElementsByTagName("iframe")[frameId].src = embedDiv.getElementsByTagName("iframe")[frameId].src.replace("layout=video-and-chat","layout=video");'+
-                        'console.log("switching player src");'+
-                    '} else if (window.innerWidth > 800 && embedDiv.getElementsByTagName("iframe")[frameId].src.replace("layout=video-and-chat","") == embedDiv.getElementsByTagName("iframe")[frameId].src ) {'+
+                        ((verbose)?'console.log("switching player src");':'')+
+                    '} else if (chatLayout && window.innerWidth > 800 && embedDiv.getElementsByTagName("iframe")[frameId].src.replace("layout=video-and-chat","") == embedDiv.getElementsByTagName("iframe")[frameId].src ) {'+
                         'embedDiv.getElementsByTagName("iframe")[frameId].src = embedDiv.getElementsByTagName("iframe")[frameId].src.replace("layout=video","layout=video-and-chat");'+
-                        'console.log("switching player src");'+
+                        ((verbose)?'console.log("switching player src");':'')+
                     '}'+
                 '});'+
             '};'+
         '};'+
     '};'
-    
 
     return (
         <>

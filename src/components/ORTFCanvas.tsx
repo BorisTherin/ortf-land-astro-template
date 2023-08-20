@@ -5,7 +5,6 @@
  */
 
 import { useRef, useEffect } from "preact/hooks"
-// import { h } from "preact"
 
 interface size {
     width: number,
@@ -30,15 +29,6 @@ interface innervcr {
 interface ivcr {
     vcr: innervcr
 }
-/**
- * EFFECT CONSTANTS
- */
-
-/**
- * DEV
- * 0 = prod |  300 = show hydration dev mode
- */
-const DEV_SHOW_HYDRATION = 0
 
 interface Iassets {
     name: string,
@@ -46,17 +36,14 @@ interface Iassets {
     image: any
 }
 
+/**
+ * DEV
+ * 0 = prod |  300 = show hydration dev mode
+ */
+const DEV_SHOW_HYDRATION = 50
 const assetsToLoad: Iassets[] = [
-    {
-        name: "tank",
-        url: "/char1.jpeg",
-        image: null
-    },
-    {
-        name: "crt",
-        url: "/crt.png",
-        image: null 
-    }
+    { name: "tank", url: "/char1.jpeg", image: null },
+    { name: "crt", url: "/crt.png", image: null  }
 ]
 
 export function ORTFCanvas() {
@@ -73,24 +60,23 @@ export function ORTFCanvas() {
     // SCRIPT VARS
     let windowDimensions: size = getWindowDimensions()
     let EffectsCanvas_rqAF: number = 0   
-    //let vcrInterval: any = 0 
     let toggleHistoryCanvasEvent = true
-    let toResize: any = null
+    let elementsToResize: any = null
     let assets: any[] = []
     
     // CONFIG VARS
     const vcr_opacity = 0.9
     const snow_opacity = 0.3
     const vcrConfig: configvcr = { 
-        fps: 70,
-        miny: 100, 
-        maxy: getWindowDimensions().height, 
+        fps: 24,
+        miny: 20, 
+        maxy: getWindowDimensions().height -20, 
         miny2: 30,
         num: 25,
         blur: 1.5
     } 
 
-    let effects: ivcr = {
+    const effects: ivcr = {
         vcr : { 
             node: EffectSnowCanvasRef.current, 
             ctx: EffectVCRCanvasCTX,  
@@ -111,10 +97,13 @@ export function ORTFCanvas() {
     /** 
      * ------------------------- RequestAnimationFrame --------------------- 
      */
-
+    let start: number = 0
+    let delay: number = 0
     function drawBackgroundImage() {
-        cancelAnimationFrame(EffectsCanvas_rqAF) 
-        if (EffectsCanvas_rqAF%100 == 0) console.log("image res ", [assets[0].width,assets[0].height])
+        //cancelAnimationFrame(EffectsCanvas_rqAF) 
+        clearInterval(EffectsCanvas_rqAF)
+        start = Date.now() - start
+        // if (EffectsCanvas_rqAF%100==0) console.log('elapsed (ms): ', start)
         HistoryCanvasCTX.drawImage(
             assets[0] , 0, 0, assets[0].width, assets[0].height, 
             0, 0, windowDimensions.width, windowDimensions.height)
@@ -123,7 +112,8 @@ export function ORTFCanvas() {
             0, 0, windowDimensions.width, windowDimensions.height) 
         generateSnow()
         renderTrackingNoise()
-        EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
+        //EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
+        EffectsCanvas_rqAF = setInterval(drawBackgroundImage, (1000/vcrConfig.fps))
     }
 
     /**
@@ -160,7 +150,6 @@ export function ORTFCanvas() {
         canvas.style.filter = `blur(${config.blur}px)`
         EffectVCRCanvasCTX.clearRect(0, 0, canvas.width, canvas.height)
         EffectVCRCanvasCTX.fillStyle = `#fff`
-
         EffectVCRCanvasCTX.beginPath()
         for (let i:number = 0; i <= num; i++) {
             var x = Math.random() * i * canvas.width
@@ -169,7 +158,6 @@ export function ORTFCanvas() {
             EffectVCRCanvasCTX.fillRect(x, y1, radius, radius)
             EffectVCRCanvasCTX.fillRect(x, y2, radius, radius)
             EffectVCRCanvasCTX.fill()
-
             renderTail(EffectVCRCanvasCTX, x, y1, radius)
             renderTail(EffectVCRCanvasCTX, x, y2, radius)
         }
@@ -205,7 +193,8 @@ export function ORTFCanvas() {
             if (DEV_SHOW_HYDRATION > 0) console.log('dropping History Canvas Events')
             removeEventListener('resize', handleHistoryCanvasResize)
             toggleHistoryCanvasEvent = false
-            cancelAnimationFrame(EffectsCanvas_rqAF) 
+            //cancelAnimationFrame(EffectsCanvas_rqAF) 
+            clearInterval(EffectsCanvas_rqAF) 
         }
         if (d >= 0 && toggleHistoryCanvasEvent == false) {
             if (DEV_SHOW_HYDRATION > 0) console.log('re-init History Canvas Events')
@@ -220,7 +209,7 @@ export function ORTFCanvas() {
     const handleHistoryCanvasResize = () => {
         if (DEV_SHOW_HYDRATION > 0) console.log('resize')
         windowDimensions = getWindowDimensions()
-        toResize.map( (element: any) => {
+        elementsToResize.map( (element: any) => {
             element.width = windowDimensions.width 
             element.height = windowDimensions.height
         })
@@ -249,7 +238,7 @@ export function ORTFCanvas() {
         }
 
         if ( HistoryCanvasRef.current && CrtCanvasRef.current && EffectSnowCanvasRef.current &&EffectVCRCanvasRef.current) {
-            toResize = [
+            elementsToResize = [
                 HistoryCanvasRef.current,
                 EffectSnowCanvasRef.current,
                 EffectVCRCanvasRef.current,
@@ -264,6 +253,7 @@ export function ORTFCanvas() {
                     assets[loadedAssets++] = img.image
                     if (loadedAssets == assetsToLoad.length) {
                         console.log('all assets loaded')
+                        start = Date.now()
                         EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage) 
                     }
                 }
@@ -285,7 +275,7 @@ export function ORTFCanvas() {
             width={windowDimensions.width}
             style="position: absolute; width: 100%; height: 100%; filter: blur(1.5px) grayscale(80%); z-index:1;"
             ref={HistoryCanvasRef}
-        ></canvas>   
+        ></canvas>
         <canvas 
             id="effects_snow"
             height={windowDimensions.height}
@@ -299,14 +289,25 @@ export function ORTFCanvas() {
             width={windowDimensions.width}
             style="position: absolute; width: 100%; height: 100%; z-index:3; opacity: 1;"
             ref={EffectVCRCanvasRef}
-        ></canvas>     
+        ></canvas>
         <canvas 
             id="crt"
             height={windowDimensions.height}
             width={windowDimensions.width}
             style="position: absolute; width: 100%; height: 100%; z-index:4; opacity: 1;"
             ref={CrtCanvasRef}
-        ></canvas>   
+        ></canvas>
+        <div 
+            id="calendarContainer" 
+            class="" 
+            style="position: absolute; width: 40%; bottom: 10%; left: 30%; z-index:4; opacity: 1; border: solid 1px; border-radius: 20px; padding: 10px; background-color: rgba(5,5,5,0.5); display: block"
+        >
+            <div id="calendarContent">
+                17 Février 1943 Ardennes -contre offensive alliée- <br />
+                <hr /><br />
+                Ce jour, ...
+            </div>
+        </div>
         </div>      
     )
 }
