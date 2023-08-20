@@ -5,6 +5,8 @@
  */
 
 import { useRef, useEffect } from "preact/hooks"
+import calendar from "../content/ORFTBackgrounds/calendar.json"
+
 
 interface size {
     width: number,
@@ -41,10 +43,18 @@ interface Iassets {
  * 0 = prod |  300 = show hydration dev mode
  */
 const DEV_SHOW_HYDRATION = 50
+//     { name: "tank", url: "/char1.jpeg", image: null },
 const assetsToLoad: Iassets[] = [
-    { name: "tank", url: "/char1.jpeg", image: null },
     { name: "crt", url: "/crt.png", image: null  }
 ]
+
+let randEvent = calendar.mode.calendar.items[Math.round(Math.random()*(calendar.mode.calendar.items.length-1))]
+console.log(randEvent)
+assetsToLoad.push({
+    name: randEvent.date+"-"+randEvent.items[0].place+"-",
+    url: calendar.mode.calendar.pictureDirectory+randEvent.items[0].picture,
+    image: null
+})
 
 export function ORTFCanvas() {
     // REFERENCES CANVAS
@@ -105,10 +115,10 @@ export function ORTFCanvas() {
         start = Date.now() - start
         // if (EffectsCanvas_rqAF%100==0) console.log('elapsed (ms): ', start)
         HistoryCanvasCTX.drawImage(
-            assets[0] , 0, 0, assets[0].width, assets[0].height, 
+            assets[1] , 0, 0, assets[1].width, assets[1].height, 
             0, 0, windowDimensions.width, windowDimensions.height)
         CrtCanvasCTX.drawImage(
-            assets[1] , 0, 0, assets[1].width, assets[1].height, 
+            assets[0] , 0, 0, assets[0].width, assets[0].height, 
             0, 0, windowDimensions.width, windowDimensions.height) 
         generateSnow()
         renderTrackingNoise()
@@ -303,9 +313,9 @@ export function ORTFCanvas() {
             style="position: absolute; width: 40%; bottom: 10%; left: 30%; z-index:4; opacity: 1; border: solid 1px; border-radius: 20px; padding: 10px; background-color: rgba(5,5,5,0.5); display: block"
         >
             <div id="calendarContent">
-                17 Février 1943 Ardennes -contre offensive alliée- <br />
+                { randEvent.date } {randEvent.items[0].place} <br />
                 <hr /><br />
-                Ce jour, ...
+                { randEvent.items[0].description }
             </div>
         </div>
         </div>      

@@ -1,0 +1,31 @@
+{    
+	"mode": {
+		"calendar": { 
+			"mode": "random|anniversary|last", 
+			"pictureDirectory": "/calendar/", 
+			"items": [
+				{ "date": "17-02-1942", "items":[
+						{"place": "Ardennes", "description": "Ce jour, ...", "picture": "char.jpeg"},
+						{"place": "Paris", "description": "Nomination de ...", "picture": "nomination.jpeg"}
+					]
+				},
+				{ "date": "18-06-1944", "items":[
+						{"place": "Normandie", "description": "Debraquement ...", "picture": "normandie.jpeg"}
+					]
+				},
+				{ "date": "22-12-1956", "items":[
+						{"place": "Paris", "description": "Ce jour, ...", "picture": "paris.jpg"}
+					]
+				}
+			]
+		},
+		"playlists": {
+			"pictureDirectory": "/playlists/", 
+			"items": []
+		},
+		"other": {
+			"pictureDirectory": "", 
+			"items": []
+		}
+	}      
+}

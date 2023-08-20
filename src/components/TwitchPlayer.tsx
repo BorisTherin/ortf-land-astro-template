@@ -17,7 +17,7 @@ export function TwitchPlayer() {
     const pixelRangeToSwitchSrcOptions = 799 // minimal pixel range to fire src option replacement when chatLayout=true (TwitchPlayer constraint (800), but may change), (windowDimensions.width+1 to disable)
     const widthRatio = 1.5                 // TwitchPlayer width screen ratio
     const heightRatio = 2                 // TwitchPlayer height screen ratio
-    const channel = 'meninblazers'         // your channel
+    const channel = 'monstercat'         // your channel
     const webUrls = '"embed.example.com", "othersite.example.com"'   // your network
     const autoplay = true              // Twitch.Embed.VIDEO_READY action
     const verbose = true              // console feedback on|off

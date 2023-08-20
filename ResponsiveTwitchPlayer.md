@@ -147,10 +147,12 @@ if (
 * Your TwitchPlayer with everythings full responsive:
 
 ```js
+<div id="twitch-embed" class="absolute" style="opacity: 0.3; z-index:5;"></div>
+<script type="text/javascript">
 /**
  *  CONFIG YOUR FLAVOR
  */
-const chatLayout = true                   // layout option [true: 'video' | false: 'video-and-chat']
+const chatLayout = true                   // layout option [true: 'video-and-chat' | false: 'video']
 const pixelRangeToSwitchSrcOptions = 800 // minimal pixel range to fire src option replacement when chatLayout=true (TwitchPlayer constraint (800 pixels), but may change), (window.innerWidth+1 to disable)
 const widthRatio = 1.5                 // TwitchPlayer width screen ratio
 const heightRatio = 2                 // TwitchPlayer height screen ratio
@@ -215,6 +217,7 @@ function startTwitch() {
 		}
 	}
 }
+</script>
 ```
 
 # &#127873; Feel free to git my preact component for 🚀Astro Island 
