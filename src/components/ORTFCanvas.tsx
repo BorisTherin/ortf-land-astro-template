@@ -310,7 +310,7 @@ export function ORTFCanvas() {
         <div 
             id="calendarContainer" 
             class="" 
-            style="position: absolute; width: 40%; bottom: 10%; left: 30%; z-index:4; opacity: 1; border: solid 1px; border-radius: 20px; padding: 10px; background-color: rgba(5,5,5,0.5); display: block"
+            style="position: absolute; width: 40%; bottom: 10%; left: 30%; z-index:4; opacity: 1; border: double 5px; border-radius: 20px; padding: 10px; background-color: rgba(5,5,5,0.5); display: block"
         >
             <div id="calendarContent">
                 { randEvent.date } {randEvent.items[0].place} <br />
