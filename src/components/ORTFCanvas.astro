@@ -8,11 +8,24 @@ const assets = [
     {
         src: "/calendar/paris.jpg",
         width: 1400,
-        class: "absolute z-2 opacity-10 w-[1400px] h-[900px] bg-gradient-to-b from-white to-black"
+        class: "absolute z-2 opacity-10 w-[1400px] h-[930px] bg-gradient-to-b from-white to-black"
     }
 ]
-const background = assets[Math.round(Math.random()*assets.length)]
+const background = assets[Math.round(Math.random()*(assets.length-1))]
 ---
+<style>
+@keyframes gradient {
+	0% {
+		background-position: 0% 0%;
+	}
+	50% {
+		background-position: 1% 0%;
+	}
+	100% {
+		background-position: 0% 1%;
+	}
+}
+</style>
 <div id="screen" class="flex place-content-center">
 
 <!-- CRT DISPLAY -->
@@ -28,7 +41,11 @@ const background = assets[Math.round(Math.random()*assets.length)]
 {<div 
     id="effects_snow" 
     class={background.class}
-    style="background-size: 5px 5px;filter: url(#noise);">
+    style="
+        background-size: 5px 5px;
+        filter: url(#noise);
+        animation: gradient 15s ease infinite;
+    ">
 </div>}
 <!--
 <svg class="hidden">
