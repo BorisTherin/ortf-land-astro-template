@@ -39,6 +39,7 @@ interface Iassets {
     name: string,
     url: string,
     image: any
+    ratio: number
 }
 
 /**
@@ -48,10 +49,12 @@ interface Iassets {
 const DEV_SHOW_HYDRATION = 150
 //     { name: "tank", url: "/char1.jpeg", image: null },
 const assetsToLoad: Iassets[] = [
-    { name: "crt", url: "/crt.png", image: null  }
+    { name: "crt", url: "/crt.png", image: null, ratio: 0 },
+    { name: "paris", url: "/calendar/char.jpeg", image: null, ratio: 0 }, 
 ]
-let backgroundAsset: any = null
-let crtAsset: any = null
+let backgroundAsset: Iassets = { name: "background", url: "", image: null, ratio: 0 }
+let crtAsset: Iassets = { name: "crt", url: "", image: null, ratio: 0 }
+/*
 let randEvent = calendar.mode.calendar.items[Math.round(Math.random()*(calendar.mode.calendar.items.length-1))]
 console.log(randEvent)
 assetsToLoad.push({
@@ -59,7 +62,7 @@ assetsToLoad.push({
     url: calendar.mode.calendar.pictureDirectory+randEvent.items[0].picture,
     image: null
 })
-
+*/
 export function ORTFCanvas() {
     // REFERENCES CANVAS
     const HistoryCanvasRef: any = useRef()
@@ -244,6 +247,7 @@ export function ORTFCanvas() {
     useEffect(() => {
         console.log("UseEffect call : ", ++useEffectCalls)
         console.log(`History Background is LOADED !!!!!!!!`)
+        windowDimensions = getWindowDimensions()
         if (HistoryCanvasRef.current) { 
             console.log('HistoryCanvasRef ready')
             //HistoryCanvasCTX = HistoryCanvasRef.current.getContext('2d')
@@ -268,10 +272,10 @@ export function ORTFCanvas() {
 
         if ( EffectSnowCanvasRef.current) {
             elementsToResize = [
-                HistoryCanvasRef.current,
+                //HistoryCanvasRef.current,
                 EffectSnowCanvasRef.current,
                 // EffectVCRCanvasRef.current,
-                CrtCanvasRef.current
+                //CrtCanvasRef.current
             ]
             let loadedAssets = 0
             assetsToLoad.map( (img) => {
@@ -279,15 +283,44 @@ export function ORTFCanvas() {
                 img.image.src = img.url
                 img.image.onload = () => { 
                     console.log("loadedAsset "+loadedAssets, img.name)
-                    if (img.name == "crt") crtAsset = img.image
-                    else backgroundAsset = img.image
-                    if (crtAsset != null && backgroundAsset != null) {
+                    console.log(img)
+                    if (img.name == "crt") crtAsset.image = img.image
+                    else backgroundAsset.image = img.image
+                    if (crtAsset .image!= null && backgroundAsset.image != null) {
                         console.log('all assets loaded')
                         start = Date.now()
                         // ADAPT CSS BACKGROUND-SIZE BOX
                         vcrConfig.SVGfeDScale = vcrConfig.SVGfeDScale * windowDimensions.height / 1000
                         const bgsize = vcrConfig.SVGbackgroundSize * windowDimensions.height / 1000
                         EffectSnowCanvasRef.current.style.backgroundSize = bgsize+"px "+bgsize+"px"
+                        
+                        console.log('BG_A : ',backgroundAsset)
+                        HistoryCanvasRef.current.src = backgroundAsset.image.src
+                        backgroundAsset.ratio = backgroundAsset.image.width / backgroundAsset.image.height
+
+
+                        if (backgroundAsset.image.width > windowDimensions.width) {
+                            backgroundAsset.ratio = windowDimensions.width / backgroundAsset.image.width 
+                            HistoryCanvasRef.current.style.top = ((windowDimensions.height-(backgroundAsset.image.height*backgroundAsset.ratio))/2)+"px"
+                            HistoryCanvasRef.current.width= backgroundAsset.image.width*backgroundAsset.ratio
+                            HistoryCanvasRef.current.height= backgroundAsset.image.height*backgroundAsset.ratio
+                        }else{
+                            if (backgroundAsset.ratio >= 1) 
+                                HistoryCanvasRef.current.style.top = ((windowDimensions.height-(backgroundAsset.image.height*backgroundAsset.ratio))/2)+"px"
+                            else 
+                                HistoryCanvasRef.current.style.left = ((windowDimensions.width-(backgroundAsset.image.width*backgroundAsset.ratio))/2)+"px"
+                            HistoryCanvasRef.current.width= ((backgroundAsset.ratio>=1)?windowDimensions.width:windowDimensions.width*backgroundAsset.ratio)
+                            HistoryCanvasRef.current.height= ((backgroundAsset.ratio<1)?windowDimensions.height:windowDimensions.height*backgroundAsset.ratio)
+                        }
+                        
+                        
+                        EffectSnowCanvasRef.current.style.top = ((windowDimensions.height-(backgroundAsset.image.height*backgroundAsset.ratio))/2)+"px"
+                        EffectSnowCanvasRef.current.style.width = ((backgroundAsset.ratio>=1)?windowDimensions.width:backgroundAsset.image.width*backgroundAsset.ratio)+"px"
+                        EffectSnowCanvasRef.current.style.height = ((backgroundAsset.ratio<1)?windowDimensions.height:backgroundAsset.image.height*backgroundAsset.ratio)+"px"
+                        //CrtCanvasRef.current.src = crtAsset.image.src
+                        //CrtCanvasRef.current.width= ((crtAsset.ratio >=1)?windowDimensions.width:windowDimensions.width*crtAsset.ratio)
+                        //CrtCanvasRef.current.height= ((crtAsset.ratio<1)?windowDimensions.height:windowDimensions.height*crtAsset.ratio)
+
                         // DRAW ONCE
                         /*
                         HistoryCanvasCTX.drawImage(
@@ -312,39 +345,42 @@ export function ORTFCanvas() {
 
     return (
         <div id="screen">
-        <img src="/calendar/char.jpeg"
+
+        <img src=""
+            width=""
+            height=""
             ref={HistoryCanvasRef}
-            style="position: absolute; top: 0; left:0; width: 100%; height: 100%; filter: blur(1.5px) grayscale(80%); z-index:1;" />
-        {/*}
+            alt=""
+            style="position: absolute; margin-top: 0; top: 0; left:0; filter: blur(1.5px) grayscale(80%); z-index:1;" 
+        />
+            {/*        
         <canvas 
             id="history_canvas"
             height={windowDimensions.height}
             width={windowDimensions.width}
             style="position: absolute; width: 100%; height: 100%; filter: blur(1.5px) grayscale(80%); z-index:1;"
-            ref={HistoryCanvasRef}
+            
         ></canvas>
         */}
         
         <div 
             id="effects_snow"
-            height={windowDimensions.height}
-            width={windowDimensions.width}
+            height="0"
+            width="0"
             /*
             class="absolute top-0 left-0 w-max h-max bg-gradient-to-r from-white to-black bg-repeat-y border-lime-600 border-l-8" 
             */
-
             style="
                 position: absolute; 
-                top: -50px;
-                left: -50px;
-                width: calc(100% + 50px); 
-                height: calc(100% + 50px); 
+                top: 0px;
+                left: 0px;
+                width: 0px;
+                height: 0px;
                 background: repeating-linear-gradient(#111, #111 50%, white 50%, white);
                 z-index:2; 
-                opacity: 0.1;
+                opacity: 1;
                 background-size: 5px 5px;
-                filter: url(#noise);" 
-
+                filter: url(#noise);"
             ref={EffectSnowCanvasRef}
         ></div>
         {/*
@@ -378,12 +414,20 @@ export function ORTFCanvas() {
             height={windowDimensions.height}
             width={windowDimensions.width}
             style="position: absolute; width: 100%; height: 100%; z-index:4; opacity: 1;"
-            ref={CrtCanvasRef}
+            
         ></canvas>
-        */}
+        */} 
+        {/*
         <img src="/crt.png"
             ref={CrtCanvasRef}
-            style="position: absolute; top: 0; left:0; width: 100%; height: 100%; filter: blur(1.5px) grayscale(80%); z-index:1;" />
+            width="" 
+            height=""
+            alt=""
+            class="absolute filter blur-4xl grayscale place-self-center justify-center"
+            /*
+            style="position: absolute; top: 0; left:0; filter: blur(1.5px) grayscale(80%); z-index:1;" 
+        */}
+            {/* /> */}
         {/*
         <div 
             id="calendarContainer" 
