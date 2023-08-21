@@ -20,7 +20,8 @@ interface configvcr {
     miny2: number,
     num: number,
     blur: number,
-    feD_Scale: number
+    feD_Scale: number,
+    drawMode: string
 }
 
 interface innervcr {
@@ -79,13 +80,14 @@ export function ORTFCanvas() {
     const vcr_opacity = 1
     const snow_opacity = 0.1
     const vcrConfig: configvcr = { 
-        fps: 24,
+        fps: 12,
         miny: 20, 
         maxy: getWindowDimensions().height -20, 
         miny2: 30,
-        num: 1,
+        num: 20,
         blur: 1.5,
-        feD_Scale: 40
+        feD_Scale: 10,
+        drawMode: "interval"
     } 
 
     const effects: ivcr = {
@@ -112,14 +114,12 @@ export function ORTFCanvas() {
     let start: number = 0
     let delay: number = 0
     function drawBackgroundImage() {
-        clearInterval(EffectsCanvas_rqAF)
+        if (vcrConfig.drawMode == "interval") clearInterval(EffectsCanvas_rqAF)
+        if (vcrConfig.drawMode == "frame") cancelAnimationFrame(EffectsCanvas_rqAF)
         start = Date.now() - start
-        HistoryCanvasCTX.drawImage(
-            assets[1] , 0, 0, assets[1].width, assets[1].height, 
-            0, 0, windowDimensions.width, windowDimensions.height)
-        
         renderTrackingNoise()
-        EffectsCanvas_rqAF = setInterval(drawBackgroundImage, (1000/vcrConfig.fps))
+        if (vcrConfig.drawMode == "interval") EffectsCanvas_rqAF = setInterval(drawBackgroundImage, (1000/vcrConfig.fps))
+        if (vcrConfig.drawMode == "frame") EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
     }
 
     /**
@@ -159,7 +159,6 @@ export function ORTFCanvas() {
         let posy2 = config.maxy || canvas.height
         let posy3 = config.miny2 || 0
         const num = config.num || 5
-        console.log(num)
         radius = radius * window.innerWidth / 1980; // FIX screen size
 
         canvas.style.filter = `blur(${(config.blur * (window.innerWidth / 1080))}px)`
@@ -173,16 +172,16 @@ export function ORTFCanvas() {
             EffectVCRCanvasCTX.fillRect(x, y1, radius, radius)
             EffectVCRCanvasCTX.fillRect(x, y2, radius, radius)
             EffectVCRCanvasCTX.fill()
-            renderTail(EffectVCRCanvasCTX, x, y1, radius)
-            renderTail(EffectVCRCanvasCTX, x, y2, radius)
+            renderTail(x, y1, radius)
+            renderTail(x, y2, radius)
         }
         EffectVCRCanvasCTX.closePath()
     }
 
-    function renderTail(ctx: any, x: number, y: number, radius: number) {
-        const n = getRandomInt(1, 50)
+    function renderTail(x: number, y: number, radius: number) {
+        const n = getRandomInt(1, (50 * window.innerWidth / 1080))
         const dirs = [1, -1]
-        let rd = radius * window.innerWidth / 1980;  // FIX screen size
+        let rd = radius * 2 * window.innerWidth / 1980;  // FIX screen size
         const dir = dirs[Math.floor(Math.random() * dirs.length)]
         for (let i = 0; i < n; i++) {
             const step = 0.01
@@ -193,6 +192,7 @@ export function ORTFCanvas() {
             EffectVCRCanvasCTX.fillRect((x += dx), y, r, r)
             EffectVCRCanvasCTX.fill()
         }
+        
     }
 
     /** 
@@ -228,6 +228,12 @@ export function ORTFCanvas() {
             element.width = windowDimensions.width 
             element.height = windowDimensions.height
         })
+        HistoryCanvasCTX.drawImage(
+            assets[1] , 0, 0, assets[1].width, assets[1].height, 
+            0, 0, windowDimensions.width, windowDimensions.height)
+        CrtCanvasCTX.drawImage(
+            assets[0] , 0, 0, assets[0].width, assets[0].height, 
+            0, 0, windowDimensions.width, windowDimensions.height) 
         drawBackgroundImage()    
     }
 
@@ -272,6 +278,9 @@ export function ORTFCanvas() {
                     if (loadedAssets == assetsToLoad.length) {
                         console.log('all assets loaded')
                         start = Date.now()
+                        HistoryCanvasCTX.drawImage(
+                            assets[1] , 0, 0, assets[1].width, assets[1].height, 
+                            0, 0, windowDimensions.width, windowDimensions.height)
                         CrtCanvasCTX.drawImage(
                             assets[0] , 0, 0, assets[0].width, assets[0].height, 
                             0, 0, windowDimensions.width, windowDimensions.height) 
@@ -338,6 +347,7 @@ export function ORTFCanvas() {
             style="position: absolute; width: 100%; height: 100%; z-index:3; opacity: 1;"
             ref={EffectVCRCanvasRef}
         ></canvas>
+        
         <canvas 
             id="crt"
             height={windowDimensions.height}
