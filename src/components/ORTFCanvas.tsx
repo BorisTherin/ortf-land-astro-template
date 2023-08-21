@@ -103,7 +103,7 @@ export function ORTFCanvas() {
         miny2: 30,
         num: 20,
         blur: 1.5,
-        SVGfeDScale: 1,
+        SVGfeDScale: 10,
         SVGbackgroundSize: 5,
         drawMode: "interval"
     } 
@@ -301,20 +301,20 @@ export function ORTFCanvas() {
 
                         if (backgroundAsset.image.width > windowDimensions.width) {
                             backgroundAsset.ratio = windowDimensions.width / backgroundAsset.image.width 
-                            HistoryCanvasRef.current.style.top = ((windowDimensions.height-(backgroundAsset.image.height*backgroundAsset.ratio))/2)+"px"
+                            //HistoryCanvasRef.current.style.top = ((windowDimensions.height-(backgroundAsset.image.height*backgroundAsset.ratio))/2)+"px"
                             HistoryCanvasRef.current.width= backgroundAsset.image.width*backgroundAsset.ratio
                             HistoryCanvasRef.current.height= backgroundAsset.image.height*backgroundAsset.ratio
                         }else{
-                            if (backgroundAsset.ratio >= 1) 
-                                HistoryCanvasRef.current.style.top = ((windowDimensions.height-(backgroundAsset.image.height*backgroundAsset.ratio))/2)+"px"
-                            else 
+                            if (backgroundAsset.ratio < 1) 
+                                //HistoryCanvasRef.current.style.top = ((windowDimensions.height-(backgroundAsset.image.height*backgroundAsset.ratio))/2)+"px"
+                            //else 
                                 HistoryCanvasRef.current.style.left = ((windowDimensions.width-(backgroundAsset.image.width*backgroundAsset.ratio))/2)+"px"
                             HistoryCanvasRef.current.width= ((backgroundAsset.ratio>=1)?windowDimensions.width:windowDimensions.width*backgroundAsset.ratio)
                             HistoryCanvasRef.current.height= ((backgroundAsset.ratio<1)?windowDimensions.height:windowDimensions.height*backgroundAsset.ratio)
                         }
                         
                         
-                        EffectSnowCanvasRef.current.style.top = ((windowDimensions.height-(backgroundAsset.image.height*backgroundAsset.ratio))/2)+"px"
+                        //EffectSnowCanvasRef.current.style.top = ((windowDimensions.height-(backgroundAsset.image.height*backgroundAsset.ratio))/2)+"px"
                         EffectSnowCanvasRef.current.style.width = ((backgroundAsset.ratio>=1)?windowDimensions.width:backgroundAsset.image.width*backgroundAsset.ratio)+"px"
                         EffectSnowCanvasRef.current.style.height = ((backgroundAsset.ratio<1)?windowDimensions.height:backgroundAsset.image.height*backgroundAsset.ratio)+"px"
                         //CrtCanvasRef.current.src = crtAsset.image.src
@@ -344,14 +344,14 @@ export function ORTFCanvas() {
     }, [])
 
     return (
-        <div id="screen">
+        <div id="screen" class="grid grid-cols-1 grid-rows-1 place-content-center">
 
         <img src=""
             width=""
             height=""
             ref={HistoryCanvasRef}
             alt=""
-            style="position: absolute; margin-top: 0; top: 0; left:0; filter: blur(1.5px) grayscale(80%); z-index:1;" 
+            style="filter: blur(1.5px) grayscale(80%); z-index:1;" 
         />
             {/*        
         <canvas 
@@ -367,23 +367,21 @@ export function ORTFCanvas() {
             id="effects_snow"
             height="0"
             width="0"
-            /*
-            class="absolute top-0 left-0 w-max h-max bg-gradient-to-r from-white to-black bg-repeat-y border-lime-600 border-l-8" 
-            */
+            
+            class="w-max h-max bg-gradient-to-r from-white to-black bg-repeat-y" 
+            
             style="
-                position: absolute; 
-                top: 0px;
-                left: 0px;
+                
                 width: 0px;
                 height: 0px;
-                background: repeating-linear-gradient(#111, #111 50%, white 50%, white);
+                /* background: repeating-linear-gradient(#111, #111 50%, white 50%, white); */
                 z-index:2; 
                 opacity: 1;
                 background-size: 5px 5px;
                 filter: url(#noise);"
             ref={EffectSnowCanvasRef}
         ></div>
-        {/*
+
         <svg style="width:0 height:0;position:absolute">
             <filter id="noise">
                 <feTurbulence id="turbulence">
@@ -391,7 +389,7 @@ export function ORTFCanvas() {
                     attributeName="baseFrequency"
                     dur="50s"
                     values="0.9 0.9;0.8 0.8; 0.9 0.9"
-                    begin="start"
+                    
                     repeatCount="indefinite"
                     ref={SVGAnimateRef}
                 ></animate>
@@ -399,7 +397,7 @@ export function ORTFCanvas() {
                 <feDisplacementMap in="SourceGraphic" scale={vcrConfig.SVGfeDScale}></feDisplacementMap>
             </filter>
         </svg>
-        */}
+
         {/*
         <canvas 
             id="effects_vcr"

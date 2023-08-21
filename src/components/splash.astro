@@ -6,7 +6,8 @@ import { Icon } from "astro-icon";
 //import Starfield from "~/components/starfield.astro";
 import GitHubCorner from "./github-corner.astro";
 
-import { ORTFCanvas } from "./ORTFCanvas";
+//import { ORTFCanvas } from "./ORTFCanvas";
+import  ORTFCanvas from "./ORTFCanvas.astro";
 import { TwitchPlayer } from "./TwitchPlayer";
  
 const widths = [450, 800] 
@@ -14,11 +15,11 @@ const sizes = "(min-width: 640px) 42vw, 67vw";
 ---
 
 <section class="relative h-full bg-black">
-  <ORTFCanvas client:only="preact" />
+  <ORTFCanvas />
   <GitHubCorner />
 
   <div class="relative grid h-full place-items-center sm:grid-cols-2">
-    <TwitchPlayer client:only="preact" /> 
+   {/* <TwitchPlayer client:only="preact" />  */}
   </div>
 </section>
 

@@ -1,0 +1,46 @@
+---      
+const assets = [
+    {
+        src: "/calendar/char.jpeg",
+        width: 1600,
+    },
+    {
+        src: "/calendar/paris.jpg",
+        width: 1400,
+    }
+]
+const background = assets[0]
+---
+<div id="screen" class="flex place-content-center">
+
+<!-- CRT DISPLAY -->
+
+{<img src={background.src}
+    width={background.width}
+    alt="..."
+    class="absolute m-0 rounded-3xl border-8 border-black filter grayscale blur-[2px] z-1"
+
+/>}
+
+<!-- CRT NOISE -->
+<div 
+    id="effects_snow"   
+    class="absolute z-2 opacity-10 w-[1600px] h-[900px] bg-gradient-to-b from-white to-black" 
+    style="background-size: 5px 5px;filter: url(#noise);">
+</div> 
+
+<svg class="hidden">
+    <filter id="noise">
+        <feTurbulence id="turbulence">
+        <animate
+            attributeName="baseFrequency"
+            dur="50s"
+            values="0.9 0.9;0.8 0.8; 0.9 0.9"            
+            repeatCount="indefinite"
+        ></animate>
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" scale="10"></feDisplacementMap>
+    </filter>
+</svg>
+ 
+</div>
