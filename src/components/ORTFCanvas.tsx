@@ -44,7 +44,7 @@ interface Iassets {
  * DEV
  * 0 = prod |  300 = show hydration dev mode
  */
-const DEV_SHOW_HYDRATION = 150
+const DEV_SHOW_HYDRATION = 50
 //     { name: "tank", url: "/char1.jpeg", image: null },
 const assetsToLoad: Iassets[] = [
     { name: "crt", url: "/crt.png", image: null  }
@@ -244,10 +244,10 @@ export function ORTFCanvas() {
             element.height = windowDimensions.height
         })
         HistoryCanvasCTX.drawImage(
-            assets[1] , 0, 0, assets[1].width, assets[1].height, 
+            backgroundAsset , 0, 0, backgroundAsset.width, backgroundAsset.height, 
             0, 0, windowDimensions.width, windowDimensions.height)
         CrtCanvasCTX.drawImage(
-            assets[0] , 0, 0, assets[0].width, assets[0].height, 
+            crtAsset , 0, 0, crtAsset.width, crtAsset.height, 
             0, 0, windowDimensions.width, windowDimensions.height) 
         drawBackgroundImage()    
     }
