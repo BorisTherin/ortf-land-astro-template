@@ -1,4 +1,14 @@
----      
+---   
+function getWindowDimensions() {
+    const hasWindow: boolean = typeof window !== 'undefined'
+    const width: number = hasWindow ? window.innerWidth : 0
+    const height: number = hasWindow ? window.innerHeight : 0
+    return {
+        width,
+        height,
+    }
+}
+const dimensions = getWindowDimensions()
 const assets = [
     {
         src: "/calendar/char.jpeg",
@@ -11,54 +21,40 @@ const assets = [
         class: "absolute z-2 opacity-10 w-[1400px] h-[930px] bg-gradient-to-b from-white to-black"
     }
 ]
+
 const background = assets[Math.round(Math.random()*(assets.length-1))]
+const animationOFF = "background-size: 5px 5px; filter: url(#noise);"
+const animationON = animationOFF + " animation: gradient 1s ease infinite;"
+
 ---
 <style>
 @keyframes gradient {
-	0% {
-		background-position: 0% 0%;
-	}
-    17% {
-		background-position: 0% 1%;
-	}
-    33% {
-		background-position: 1% 0%;
-	}
-	50% {
-		background-position: 1% 0%;
-	}
-    67% {
-		background-position: 1% 1%;
-	}
-    83% {
-		background-position: 1% 0%;
-	}
-	100% {
-		background-position: 0% 1%;
-	}
+	0% { background-position: 0% 0%; }
+    17% { background-position: 0% 1%; }
+    33% { background-position: 1% 0%; }
+	50% { background-position: 1% 0%; }
+    67% { background-position: 1% 1%; }
+    83% { background-position: 1% 0%; }
+	100% { background-position: 0% 1%; }
 }
 </style>
-<div id="screen" class="flex place-content-center">
+<div id="landing-screen-container" class="grid justify-items-center items-center h-screen">
 
 <!-- CRT DISPLAY -->
 
-{<img src={background.src}
+<img src={background.src}
     width={background.width}
     alt="..."
-    class="absolute m-0 rounded-3xl border-8 border-black filter grayscale blur-[2px] z-1"
-
-/>}
+    class="m-0 rounded-3xl border-8 border-black filter grayscale blur-[2px] z-1"
+/>
 
 <!-- CRT NOISE -->
-{<div 
+<div 
     id="effects_snow" 
     class={background.class}
-    style="
-        background-size: 5px 5px;
-        filter: url(#noise);
-        animation: gradient 1s ease infinite;
-    ">
-</div>}
+    style={animationOFF}>
+</div>
+
 <!--
 <svg class="hidden">
     <filter id="noise">
