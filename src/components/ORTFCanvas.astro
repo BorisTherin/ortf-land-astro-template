@@ -3,10 +3,12 @@ const assets = [
     {
         src: "/calendar/char.jpeg",
         width: 1600,
+        class: "absolute z-2 opacity-10 w-[1600px] h-[900px] bg-gradient-to-b from-white to-black"
     },
     {
         src: "/calendar/paris.jpg",
         width: 1400,
+        class: "absolute z-2 opacity-10 w-[1400px] h-[900px] bg-gradient-to-b from-white to-black"
     }
 ]
 const background = assets[Math.round(Math.random()*assets.length)]
@@ -23,11 +25,11 @@ const background = assets[Math.round(Math.random()*assets.length)]
 />}
 
 <!-- CRT NOISE -->
-<div 
-    id="effects_snow"   
-    class="absolute z-2 opacity-10 w-[1600px] h-[900px] bg-gradient-to-b from-white to-black" 
+{<div 
+    id="effects_snow" 
+    class={background.class}
     style="background-size: 5px 5px;filter: url(#noise);">
-</div> 
+</div>}
 <!--
 <svg class="hidden">
     <filter id="noise">
