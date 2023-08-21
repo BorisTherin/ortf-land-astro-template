@@ -20,7 +20,8 @@ interface configvcr {
     miny2: number,
     num: number,
     blur: number,
-    feD_Scale: number,
+    SVGfeDScale: number,
+    SVGbackgroundSize: number,
     drawMode: string
 }
 
@@ -85,7 +86,7 @@ export function ORTFCanvas() {
     /**
      * SOME CALCS
      * 
-     * feD_Scale has to scale with window.innerWidth|Height
+     * SVGfeDScale has to scale with window.innerWidth|Height
      * num ?
      * blur has to reduce with high res
      * 
@@ -99,7 +100,8 @@ export function ORTFCanvas() {
         miny2: 30,
         num: 20,
         blur: 1.5,
-        feD_Scale: 10,
+        SVGfeDScale: 10,
+        SVGbackgroundSize: 5,
         drawMode: "interval"
     } 
 
@@ -297,6 +299,11 @@ export function ORTFCanvas() {
                     if (crtAsset != null && backgroundAsset != null) {
                         console.log('all assets loaded')
                         start = Date.now()
+                        // ADAPT CSS BACKGROUND-SIZE BOX
+                        vcrConfig.SVGfeDScale = vcrConfig.SVGfeDScale * windowDimensions.height / 1000
+                        const bgsize = vcrConfig.SVGbackgroundSize * windowDimensions.height / 1000
+                        EffectSnowCanvasRef.current.style.backgroundSize = bgsize+"px "+bgsize+"px"
+                        // DRAW ONCE
                         HistoryCanvasCTX.drawImage(
                             backgroundAsset , 0, 0,backgroundAsset.width, backgroundAsset.height, 
                             0, 0, windowDimensions.width, windowDimensions.height)
@@ -345,7 +352,7 @@ export function ORTFCanvas() {
                 height: calc(100% + 50px); 
                 background: repeating-linear-gradient(#111, #111 50%, white 50%, white);
                 z-index:2; 
-                opacity: 0.1;
+                opacity: 1;
                 background-size: 5px 5px;
                 filter: url(#noise);" 
 
@@ -362,7 +369,7 @@ export function ORTFCanvas() {
                     ref={SVGAnimateRef}
                 ></animate>
                 </feTurbulence>
-                <feDisplacementMap in="SourceGraphic" scale={vcrConfig.feD_Scale}></feDisplacementMap>
+                <feDisplacementMap in="SourceGraphic" scale={vcrConfig.SVGfeDScale}></feDisplacementMap>
             </filter>
         </svg>
         <canvas 
