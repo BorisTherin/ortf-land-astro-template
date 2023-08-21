@@ -44,12 +44,13 @@ interface Iassets {
  * DEV
  * 0 = prod |  300 = show hydration dev mode
  */
-const DEV_SHOW_HYDRATION = 50
+const DEV_SHOW_HYDRATION = 150
 //     { name: "tank", url: "/char1.jpeg", image: null },
 const assetsToLoad: Iassets[] = [
     { name: "crt", url: "/crt.png", image: null  }
 ]
-
+let backgroundAsset: any = null
+let crtAsset: any = null
 let randEvent = calendar.mode.calendar.items[Math.round(Math.random()*(calendar.mode.calendar.items.length-1))]
 console.log(randEvent)
 assetsToLoad.push({
@@ -79,8 +80,19 @@ export function ORTFCanvas() {
     // CONFIG VARS
     const vcr_opacity = 1
     const snow_opacity = 0.1
+
+    /**
+     * SOME CALCS
+     * 
+     * feD_Scale has to scale with window.innerWidth|Height
+     * num ?
+     * blur has to reduce with high res
+     * 
+     */
+
+
     const vcrConfig: configvcr = { 
-        fps: 12,
+        fps: 6,
         miny: 20, 
         maxy: getWindowDimensions().height -20, 
         miny2: 30,
@@ -207,9 +219,10 @@ export function ORTFCanvas() {
         if (d < 0 && toggleHistoryCanvasEvent == true) {
             if (DEV_SHOW_HYDRATION > 0) console.log('dropping History Canvas Events')
             removeEventListener('resize', handleHistoryCanvasResize)
+            EffectSnowCanvasRef.current.style.display = "none"
             toggleHistoryCanvasEvent = false
-            //cancelAnimationFrame(EffectsCanvas_rqAF) 
-            clearInterval(EffectsCanvas_rqAF) 
+            if (vcrConfig.drawMode == "frame") cancelAnimationFrame(EffectsCanvas_rqAF) 
+            if (vcrConfig.drawMode == "interval") clearInterval(EffectsCanvas_rqAF) 
         }
         if (d >= 0 && toggleHistoryCanvasEvent == false) {
             if (DEV_SHOW_HYDRATION > 0) console.log('re-init History Canvas Events')
@@ -217,7 +230,9 @@ export function ORTFCanvas() {
             if (HistoryCanvasRef.current.width != windowDimensions.width) handleHistoryCanvasResize()
             window.addEventListener('resize', handleHistoryCanvasResize)
             toggleHistoryCanvasEvent = true
-            EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
+            EffectSnowCanvasRef.current.style.display = "block"
+            if (vcrConfig.drawMode == "frame") EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
+            if (vcrConfig.drawMode == "interval") EffectsCanvas_rqAF = setInterval(drawBackgroundImage, (1000/vcrConfig.fps))
         }
     }
 
@@ -248,13 +263,13 @@ export function ORTFCanvas() {
             console.log('CrtCanvasRef ready')
             CrtCanvasCTX = CrtCanvasRef.current.getContext('2d')
         }
-        /*
+        
         if (EffectSnowCanvasRef.current){  
             console.log('EffectSnowCanvasRef ready')  
             EffectSnowCanvasRef.current.style.opacity = snow_opacity
-            EffectSnowCanvasCTX = EffectSnowCanvasRef.current.getContext('2d')
+            //EffectSnowCanvasCTX = EffectSnowCanvasRef.current.getContext('2d')
         }
-        */
+        
         if (EffectVCRCanvasRef.current) {
             console.log('EffectVCRCanvasRef ready')
             EffectVCRCanvasRef.current.style.opacity = vcr_opacity
@@ -274,15 +289,16 @@ export function ORTFCanvas() {
                 img.image.src = img.url
                 img.image.onload = () => { 
                     console.log("loadedAsset "+loadedAssets, img.name)
-                    assets[loadedAssets++] = img.image
-                    if (loadedAssets == assetsToLoad.length) {
+                    if (img.name == "crt") crtAsset = img.image
+                    else backgroundAsset = img.image
+                    if (crtAsset != null && backgroundAsset != null) {
                         console.log('all assets loaded')
                         start = Date.now()
                         HistoryCanvasCTX.drawImage(
-                            assets[1] , 0, 0, assets[1].width, assets[1].height, 
+                            backgroundAsset , 0, 0,backgroundAsset.width, backgroundAsset.height, 
                             0, 0, windowDimensions.width, windowDimensions.height)
                         CrtCanvasCTX.drawImage(
-                            assets[0] , 0, 0, assets[0].width, assets[0].height, 
+                            crtAsset , 0, 0, crtAsset.width, crtAsset.height, 
                             0, 0, windowDimensions.width, windowDimensions.height) 
                         EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage) 
                     }
@@ -358,7 +374,7 @@ export function ORTFCanvas() {
         <div 
             id="calendarContainer" 
             class="" 
-            style="position: absolute; width: 40%; bottom: 10%; left: 30%; z-index:4; opacity: 1; border: double 5px; border-radius: 20px; padding: 10px; background-color: rgba(5,5,5,0.5); display: block"
+            style="position: absolute; width: 40%; bottom: 10%; left: 30%; z-index:4; opacity: 1; border: double 5px; border-radius: 3px; padding: 10px; background-color: rgba(5,5,5,0.5); display: block"
         >
             <div id="calendarContent">
                 { randEvent.date } {randEvent.items[0].place} <br />
