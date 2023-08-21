@@ -19,7 +19,8 @@ interface configvcr {
     maxy: number, 
     miny2: number,
     num: number,
-    blur: number
+    blur: number,
+    feD_Scale: number
 }
 
 interface innervcr {
@@ -75,15 +76,16 @@ export function ORTFCanvas() {
     let assets: any[] = []
     
     // CONFIG VARS
-    const vcr_opacity = 0.9
-    const snow_opacity = 0.3
+    const vcr_opacity = 1
+    const snow_opacity = 0.1
     const vcrConfig: configvcr = { 
         fps: 24,
         miny: 20, 
         maxy: getWindowDimensions().height -20, 
         miny2: 30,
-        num: 25,
-        blur: 1.5
+        num: 1,
+        blur: 1.5,
+        feD_Scale: 40
     } 
 
     const effects: ivcr = {
@@ -110,19 +112,13 @@ export function ORTFCanvas() {
     let start: number = 0
     let delay: number = 0
     function drawBackgroundImage() {
-        //cancelAnimationFrame(EffectsCanvas_rqAF) 
         clearInterval(EffectsCanvas_rqAF)
         start = Date.now() - start
-        // if (EffectsCanvas_rqAF%100==0) console.log('elapsed (ms): ', start)
         HistoryCanvasCTX.drawImage(
             assets[1] , 0, 0, assets[1].width, assets[1].height, 
             0, 0, windowDimensions.width, windowDimensions.height)
-        CrtCanvasCTX.drawImage(
-            assets[0] , 0, 0, assets[0].width, assets[0].height, 
-            0, 0, windowDimensions.width, windowDimensions.height) 
-        generateSnow()
+        
         renderTrackingNoise()
-        //EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
         EffectsCanvas_rqAF = setInterval(drawBackgroundImage, (1000/vcrConfig.fps))
     }
 
@@ -137,27 +133,36 @@ export function ORTFCanvas() {
     }
     
     // Generate CRT noise
+    /** 
+     * => pre compile b[i] * 30
+     */
     function generateSnow() {
-        var w = EffectSnowCanvasCTX.canvas.width,
-            h = EffectSnowCanvasCTX.canvas.height,
+        var w = 50, //EffectSnowCanvasCTX.canvas.width,
+            h = 50, //EffectSnowCanvasCTX.canvas.height,
             d = EffectSnowCanvasCTX.createImageData(w, h),
             b = new Uint32Array(d.data.buffer),
-            len = b.length;
+            len = b.length
         for (var i = 0; i < len; i++) {
             b[i] = ((255 * Math.random()) | 0) << 24;
         }
         EffectSnowCanvasCTX.putImageData(d, 0, 0);
     }
 
+    /**
+     * 
+     * 
+     */
     function renderTrackingNoise(radius:number = 2) {        
         const canvas = EffectVCRCanvasRef.current
         const config = effects.vcr.config
         let posy1 = config.miny || 0
         let posy2 = config.maxy || canvas.height
         let posy3 = config.miny2 || 0
-        const num = config.num || 20
+        const num = config.num || 5
+        console.log(num)
+        radius = radius * window.innerWidth / 1980; // FIX screen size
 
-        canvas.style.filter = `blur(${config.blur}px)`
+        canvas.style.filter = `blur(${(config.blur * (window.innerWidth / 1080))}px)`
         EffectVCRCanvasCTX.clearRect(0, 0, canvas.width, canvas.height)
         EffectVCRCanvasCTX.fillStyle = `#fff`
         EffectVCRCanvasCTX.beginPath()
@@ -177,7 +182,7 @@ export function ORTFCanvas() {
     function renderTail(ctx: any, x: number, y: number, radius: number) {
         const n = getRandomInt(1, 50)
         const dirs = [1, -1]
-        let rd = radius
+        let rd = radius * window.innerWidth / 1980;  // FIX screen size
         const dir = dirs[Math.floor(Math.random() * dirs.length)]
         for (let i = 0; i < n; i++) {
             const step = 0.01
@@ -236,11 +241,14 @@ export function ORTFCanvas() {
         }if (CrtCanvasRef.current) {
             console.log('CrtCanvasRef ready')
             CrtCanvasCTX = CrtCanvasRef.current.getContext('2d')
-        }if (EffectSnowCanvasRef.current){  
+        }
+        /*
+        if (EffectSnowCanvasRef.current){  
             console.log('EffectSnowCanvasRef ready')  
             EffectSnowCanvasRef.current.style.opacity = snow_opacity
             EffectSnowCanvasCTX = EffectSnowCanvasRef.current.getContext('2d')
         }
+        */
         if (EffectVCRCanvasRef.current) {
             console.log('EffectVCRCanvasRef ready')
             EffectVCRCanvasRef.current.style.opacity = vcr_opacity
@@ -264,6 +272,9 @@ export function ORTFCanvas() {
                     if (loadedAssets == assetsToLoad.length) {
                         console.log('all assets loaded')
                         start = Date.now()
+                        CrtCanvasCTX.drawImage(
+                            assets[0] , 0, 0, assets[0].width, assets[0].height, 
+                            0, 0, windowDimensions.width, windowDimensions.height) 
                         EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage) 
                     }
                 }
@@ -286,13 +297,40 @@ export function ORTFCanvas() {
             style="position: absolute; width: 100%; height: 100%; filter: blur(1.5px) grayscale(80%); z-index:1;"
             ref={HistoryCanvasRef}
         ></canvas>
-        <canvas 
+        {/*
+            CHANGEMENT SNOW-JS TO SNOW-CSS + SVG
+                CANVAS => DIV (same props)
+        */}
+        <div 
             id="effects_snow"
             height={windowDimensions.height}
             width={windowDimensions.width}
-            style="position: absolute; width: 100%; height: 100%; z-index:2; opacity: 1;"
+            style="
+                position: absolute; 
+                top: -50px;
+                left: -50px;
+                width: calc(100% + 50px); 
+                height: calc(100% + 50px); 
+                background: repeating-linear-gradient(#111, #111 50%, white 50%, white);
+                z-index:2; 
+                opacity: 0.1;
+                background-size: 5px 5px;
+                filter: url(#noise);" 
             ref={EffectSnowCanvasRef}
-        ></canvas>
+        ></div>
+        <svg style="width:0 height:0;position:absolute">
+            <filter id="noise">
+                <feTurbulence id="turbulence">
+                <animate
+                    attributeName="baseFrequency"
+                    dur="50s"
+                    values="0.9 0.9;0.8 0.8; 0.9 0.9"
+                    repeatCount="indefinite"
+                ></animate>
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" scale={vcrConfig.feD_Scale}></feDisplacementMap>
+            </filter>
+        </svg>
         <canvas 
             id="effects_vcr"
             height={windowDimensions.height}
