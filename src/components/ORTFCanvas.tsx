@@ -44,7 +44,7 @@ interface Iassets {
  * DEV
  * 0 = prod |  300 = show hydration dev mode
  */
-const DEV_SHOW_HYDRATION = 50
+const DEV_SHOW_HYDRATION = 150
 //     { name: "tank", url: "/char1.jpeg", image: null },
 const assetsToLoad: Iassets[] = [
     { name: "crt", url: "/crt.png", image: null  }
@@ -65,6 +65,7 @@ export function ORTFCanvas() {
     const EffectSnowCanvasRef: any = useRef()
     const EffectVCRCanvasRef: any = useRef()
     const CrtCanvasRef: any = useRef()
+    const SVGAnimateRef: any = useRef()
     // CONTEXTS
     let HistoryCanvasCTX: any = null
     let EffectSnowCanvasCTX: any = null
@@ -220,6 +221,7 @@ export function ORTFCanvas() {
             if (DEV_SHOW_HYDRATION > 0) console.log('dropping History Canvas Events')
             removeEventListener('resize', handleHistoryCanvasResize)
             EffectSnowCanvasRef.current.style.display = "none"
+            // SVGAnimateRef.current.repeatCount = "indefinite"
             toggleHistoryCanvasEvent = false
             if (vcrConfig.drawMode == "frame") cancelAnimationFrame(EffectsCanvas_rqAF) 
             if (vcrConfig.drawMode == "interval") clearInterval(EffectsCanvas_rqAF) 
@@ -231,6 +233,7 @@ export function ORTFCanvas() {
             window.addEventListener('resize', handleHistoryCanvasResize)
             toggleHistoryCanvasEvent = true
             EffectSnowCanvasRef.current.style.display = "block"
+            //SVGAnimateRef.current.repeatCount = "1"
             if (vcrConfig.drawMode == "frame") EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
             if (vcrConfig.drawMode == "interval") EffectsCanvas_rqAF = setInterval(drawBackgroundImage, (1000/vcrConfig.fps))
         }
@@ -263,7 +266,7 @@ export function ORTFCanvas() {
             console.log('CrtCanvasRef ready')
             CrtCanvasCTX = CrtCanvasRef.current.getContext('2d')
         }
-        
+        if (SVGAnimateRef.current) console.log('SVGAnimateRef ready', SVGAnimateRef.current)        
         if (EffectSnowCanvasRef.current){  
             console.log('EffectSnowCanvasRef ready')  
             EffectSnowCanvasRef.current.style.opacity = snow_opacity
@@ -276,7 +279,7 @@ export function ORTFCanvas() {
             EffectVCRCanvasCTX = EffectVCRCanvasRef.current.getContext('2d')
         }
 
-        if ( HistoryCanvasRef.current && CrtCanvasRef.current && EffectSnowCanvasRef.current &&EffectVCRCanvasRef.current) {
+        if ( HistoryCanvasRef.current && CrtCanvasRef.current && EffectSnowCanvasRef.current &&EffectVCRCanvasRef.current && SVGAnimateRef.current) {
             elementsToResize = [
                 HistoryCanvasRef.current,
                 EffectSnowCanvasRef.current,
@@ -330,6 +333,10 @@ export function ORTFCanvas() {
             id="effects_snow"
             height={windowDimensions.height}
             width={windowDimensions.width}
+            /*
+            class="absolute top-0 left-0 w-max h-max bg-gradient-to-r from-white to-black bg-repeat-y border-lime-600 border-l-8" 
+            */
+
             style="
                 position: absolute; 
                 top: -50px;
@@ -341,6 +348,7 @@ export function ORTFCanvas() {
                 opacity: 0.1;
                 background-size: 5px 5px;
                 filter: url(#noise);" 
+
             ref={EffectSnowCanvasRef}
         ></div>
         <svg style="width:0 height:0;position:absolute">
@@ -351,6 +359,7 @@ export function ORTFCanvas() {
                     dur="50s"
                     values="0.9 0.9;0.8 0.8; 0.9 0.9"
                     repeatCount="indefinite"
+                    ref={SVGAnimateRef}
                 ></animate>
                 </feTurbulence>
                 <feDisplacementMap in="SourceGraphic" scale={vcrConfig.feD_Scale}></feDisplacementMap>
@@ -362,8 +371,7 @@ export function ORTFCanvas() {
             width={windowDimensions.width}
             style="position: absolute; width: 100%; height: 100%; z-index:3; opacity: 1;"
             ref={EffectVCRCanvasRef}
-        ></canvas>
-        
+        ></canvas>        
         <canvas 
             id="crt"
             height={windowDimensions.height}
