@@ -100,7 +100,7 @@ export function ORTFCanvas() {
         miny2: 30,
         num: 20,
         blur: 1.5,
-        SVGfeDScale: 10,
+        SVGfeDScale: 1,
         SVGbackgroundSize: 5,
         drawMode: "interval"
     } 
@@ -132,7 +132,7 @@ export function ORTFCanvas() {
         if (vcrConfig.drawMode == "interval") clearInterval(EffectsCanvas_rqAF)
         if (vcrConfig.drawMode == "frame") cancelAnimationFrame(EffectsCanvas_rqAF)
         start = Date.now() - start
-        renderTrackingNoise()
+        // renderTrackingNoise()
         if (vcrConfig.drawMode == "interval") EffectsCanvas_rqAF = setInterval(drawBackgroundImage, (1000/vcrConfig.fps))
         if (vcrConfig.drawMode == "frame") EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
     }
@@ -146,27 +146,7 @@ export function ORTFCanvas() {
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-    
-    // Generate CRT noise
-    /** 
-     * => pre compile b[i] * 30
-     */
-    function generateSnow() {
-        var w = 50, //EffectSnowCanvasCTX.canvas.width,
-            h = 50, //EffectSnowCanvasCTX.canvas.height,
-            d = EffectSnowCanvasCTX.createImageData(w, h),
-            b = new Uint32Array(d.data.buffer),
-            len = b.length
-        for (var i = 0; i < len; i++) {
-            b[i] = ((255 * Math.random()) | 0) << 24;
-        }
-        EffectSnowCanvasCTX.putImageData(d, 0, 0);
-    }
-
-    /**
-     * 
-     * 
-     */
+    /*
     function renderTrackingNoise(radius:number = 2) {        
         const canvas = EffectVCRCanvasRef.current
         const config = effects.vcr.config
@@ -209,6 +189,7 @@ export function ORTFCanvas() {
         }
         
     }
+    */
 
     /** 
      * ----------------------------- /effects -------------------------- 
@@ -225,8 +206,8 @@ export function ORTFCanvas() {
             EffectSnowCanvasRef.current.style.display = "none"
             // SVGAnimateRef.current.repeatCount = "indefinite"
             toggleHistoryCanvasEvent = false
-            if (vcrConfig.drawMode == "frame") cancelAnimationFrame(EffectsCanvas_rqAF) 
-            if (vcrConfig.drawMode == "interval") clearInterval(EffectsCanvas_rqAF) 
+            //if (vcrConfig.drawMode == "frame") cancelAnimationFrame(EffectsCanvas_rqAF) 
+            //if (vcrConfig.drawMode == "interval") clearInterval(EffectsCanvas_rqAF) 
         }
         if (d >= 0 && toggleHistoryCanvasEvent == false) {
             if (DEV_SHOW_HYDRATION > 0) console.log('re-init History Canvas Events')
@@ -236,8 +217,8 @@ export function ORTFCanvas() {
             toggleHistoryCanvasEvent = true
             EffectSnowCanvasRef.current.style.display = "block"
             //SVGAnimateRef.current.repeatCount = "1"
-            if (vcrConfig.drawMode == "frame") EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
-            if (vcrConfig.drawMode == "interval") EffectsCanvas_rqAF = setInterval(drawBackgroundImage, (1000/vcrConfig.fps))
+            //if (vcrConfig.drawMode == "frame") EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage)
+            //if (vcrConfig.drawMode == "interval") EffectsCanvas_rqAF = setInterval(drawBackgroundImage, (1000/vcrConfig.fps))
         }
     }
 
@@ -248,13 +229,15 @@ export function ORTFCanvas() {
             element.width = windowDimensions.width 
             element.height = windowDimensions.height
         })
+        /*
         HistoryCanvasCTX.drawImage(
             backgroundAsset , 0, 0, backgroundAsset.width, backgroundAsset.height, 
             0, 0, windowDimensions.width, windowDimensions.height)
         CrtCanvasCTX.drawImage(
             crtAsset , 0, 0, crtAsset.width, crtAsset.height, 
             0, 0, windowDimensions.width, windowDimensions.height) 
-        drawBackgroundImage()    
+        drawBackgroundImage()
+        */
     }
 
     let useEffectCalls = 0
@@ -263,29 +246,31 @@ export function ORTFCanvas() {
         console.log(`History Background is LOADED !!!!!!!!`)
         if (HistoryCanvasRef.current) { 
             console.log('HistoryCanvasRef ready')
-            HistoryCanvasCTX = HistoryCanvasRef.current.getContext('2d')
+            //HistoryCanvasCTX = HistoryCanvasRef.current.getContext('2d')
         }if (CrtCanvasRef.current) {
             console.log('CrtCanvasRef ready')
-            CrtCanvasCTX = CrtCanvasRef.current.getContext('2d')
+            //CrtCanvasCTX = CrtCanvasRef.current.getContext('2d')
         }
-        if (SVGAnimateRef.current) console.log('SVGAnimateRef ready', SVGAnimateRef.current)        
-        if (EffectSnowCanvasRef.current){  
-            console.log('EffectSnowCanvasRef ready')  
-            EffectSnowCanvasRef.current.style.opacity = snow_opacity
-            //EffectSnowCanvasCTX = EffectSnowCanvasRef.current.getContext('2d')
-        }
+        //if (SVGAnimateRef.current) console.log('SVGAnimateRef ready', SVGAnimateRef.current)        
         
+        /*
         if (EffectVCRCanvasRef.current) {
             console.log('EffectVCRCanvasRef ready')
             EffectVCRCanvasRef.current.style.opacity = vcr_opacity
             EffectVCRCanvasCTX = EffectVCRCanvasRef.current.getContext('2d')
         }
+        */
+        if (EffectSnowCanvasRef.current){  
+            console.log('EffectSnowCanvasRef ready')  
+            EffectSnowCanvasRef.current.style.opacity = snow_opacity
+            //EffectSnowCanvasCTX = EffectSnowCanvasRef.current.getContext('2d')
+        }
 
-        if ( HistoryCanvasRef.current && CrtCanvasRef.current && EffectSnowCanvasRef.current &&EffectVCRCanvasRef.current && SVGAnimateRef.current) {
+        if ( EffectSnowCanvasRef.current) {
             elementsToResize = [
                 HistoryCanvasRef.current,
                 EffectSnowCanvasRef.current,
-                EffectVCRCanvasRef.current,
+                // EffectVCRCanvasRef.current,
                 CrtCanvasRef.current
             ]
             let loadedAssets = 0
@@ -304,13 +289,15 @@ export function ORTFCanvas() {
                         const bgsize = vcrConfig.SVGbackgroundSize * windowDimensions.height / 1000
                         EffectSnowCanvasRef.current.style.backgroundSize = bgsize+"px "+bgsize+"px"
                         // DRAW ONCE
+                        /*
                         HistoryCanvasCTX.drawImage(
                             backgroundAsset , 0, 0,backgroundAsset.width, backgroundAsset.height, 
                             0, 0, windowDimensions.width, windowDimensions.height)
                         CrtCanvasCTX.drawImage(
                             crtAsset , 0, 0, crtAsset.width, crtAsset.height, 
                             0, 0, windowDimensions.width, windowDimensions.height) 
-                        EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage) 
+                        */
+                        // EffectsCanvas_rqAF = requestAnimationFrame(drawBackgroundImage) 
                     }
                 }
             })
@@ -325,6 +312,10 @@ export function ORTFCanvas() {
 
     return (
         <div id="screen">
+        <img src="/calendar/char.jpeg"
+            ref={HistoryCanvasRef}
+            style="position: absolute; top: 0; left:0; width: 100%; height: 100%; filter: blur(1.5px) grayscale(80%); z-index:1;" />
+        {/*}
         <canvas 
             id="history_canvas"
             height={windowDimensions.height}
@@ -332,10 +323,8 @@ export function ORTFCanvas() {
             style="position: absolute; width: 100%; height: 100%; filter: blur(1.5px) grayscale(80%); z-index:1;"
             ref={HistoryCanvasRef}
         ></canvas>
-        {/*
-            CHANGEMENT SNOW-JS TO SNOW-CSS + SVG
-                CANVAS => DIV (same props)
         */}
+        
         <div 
             id="effects_snow"
             height={windowDimensions.height}
@@ -352,12 +341,13 @@ export function ORTFCanvas() {
                 height: calc(100% + 50px); 
                 background: repeating-linear-gradient(#111, #111 50%, white 50%, white);
                 z-index:2; 
-                opacity: 1;
+                opacity: 0.1;
                 background-size: 5px 5px;
                 filter: url(#noise);" 
 
             ref={EffectSnowCanvasRef}
         ></div>
+        {/*
         <svg style="width:0 height:0;position:absolute">
             <filter id="noise">
                 <feTurbulence id="turbulence">
@@ -365,6 +355,7 @@ export function ORTFCanvas() {
                     attributeName="baseFrequency"
                     dur="50s"
                     values="0.9 0.9;0.8 0.8; 0.9 0.9"
+                    begin="start"
                     repeatCount="indefinite"
                     ref={SVGAnimateRef}
                 ></animate>
@@ -372,6 +363,8 @@ export function ORTFCanvas() {
                 <feDisplacementMap in="SourceGraphic" scale={vcrConfig.SVGfeDScale}></feDisplacementMap>
             </filter>
         </svg>
+        */}
+        {/*
         <canvas 
             id="effects_vcr"
             height={windowDimensions.height}
@@ -379,6 +372,7 @@ export function ORTFCanvas() {
             style="position: absolute; width: 100%; height: 100%; z-index:3; opacity: 1;"
             ref={EffectVCRCanvasRef}
         ></canvas>        
+
         <canvas 
             id="crt"
             height={windowDimensions.height}
@@ -386,6 +380,10 @@ export function ORTFCanvas() {
             style="position: absolute; width: 100%; height: 100%; z-index:4; opacity: 1;"
             ref={CrtCanvasRef}
         ></canvas>
+        */}
+        <img src="/crt.png"
+            ref={CrtCanvasRef}
+            style="position: absolute; top: 0; left:0; width: 100%; height: 100%; filter: blur(1.5px) grayscale(80%); z-index:1;" />
         <div 
             id="calendarContainer" 
             class="" 
