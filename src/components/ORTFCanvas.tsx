@@ -384,6 +384,7 @@ export function ORTFCanvas() {
         <img src="/crt.png"
             ref={CrtCanvasRef}
             style="position: absolute; top: 0; left:0; width: 100%; height: 100%; filter: blur(1.5px) grayscale(80%); z-index:1;" />
+        {/*
         <div 
             id="calendarContainer" 
             class="" 
@@ -395,6 +396,7 @@ export function ORTFCanvas() {
                 { randEvent.items[0].description }
             </div>
         </div>
+        */}
         </div>      
     )
 }
