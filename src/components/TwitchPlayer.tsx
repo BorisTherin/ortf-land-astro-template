@@ -50,7 +50,7 @@ export function TwitchPlayer() {
         'const embedDiv = document.getElementById("twitch-embed");'+        
         'for (var i=0; i < embedDiv.getElementsByTagName("iframe").length; i++) {'+
             'if (embedDiv.getElementsByTagName("iframe")[i].title == "Twitch") {'+
-                ((verbose)?'console.log("attaching resize Events on TwitchPlayer-frame["+i+"]");':'')+
+                // ((verbose)?'console.log("attaching resize Events on TwitchPlayer-frame["+i+"]");':'')+
                 'const frameId = i;'+
                 'embedDiv.getElementsByTagName("iframe")[frameId].width = "100%";'+
                 'embedDiv.getElementsByTagName("iframe")[frameId].height = "100%";'+

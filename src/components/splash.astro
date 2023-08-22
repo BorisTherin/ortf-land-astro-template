@@ -8,7 +8,7 @@ import GitHubCorner from "./github-corner.astro";
 
 //import { ORTFCanvas } from "./ORTFCanvas";
 import  ORTFCanvas from "./ORTFCanvas.astro";
-import { TwitchPlayer } from "./TwitchPlayer";
+import TwitchPlayer from "./TwitchPlayer.astro";
  
 const widths = [450, 800] 
 const sizes = "(min-width: 640px) 42vw, 67vw";
@@ -19,8 +19,8 @@ const sizes = "(min-width: 640px) 42vw, 67vw";
   <GitHubCorner />
 
   <div class="relative grid h-full place-items-center sm:grid-cols-1">
-    <ORTFCanvas />
-   <TwitchPlayer client:only="preact" /> 
+   <ORTFCanvas />
+   <TwitchPlayer />
   </div>
 </section>
 

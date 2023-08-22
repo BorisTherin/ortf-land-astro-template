@@ -1,59 +1,50 @@
 ---   
-function getWindowDimensions() {
-    const hasWindow: boolean = typeof window !== 'undefined'
-    const width: number = hasWindow ? window.innerWidth : 0
-    const height: number = hasWindow ? window.innerHeight : 0
-    return {
-        width,
-        height,
-    }
-}
-const dimensions = getWindowDimensions()
 const assets = [
     {
         src: "/calendar/char.jpeg",
         width: 1600,
-        class: "absolute z-2 opacity-10 min-w-full min-h-full bg-gradient-to-b from-white to-black"
+        height: 900,
+        ratio: 0,
     },
     {
         src: "/calendar/paris.jpg",
         width: 1400,
-        class: "absolute z-2 opacity-10 min-w-full min-h-full bg-gradient-to-b from-white to-black"
+        height: 930,
+        ratio: 0,
     }
 ]
 
-const background = assets[Math.round(Math.random()*(assets.length-1))]
-const animationOFF = "background-size: 5px 5px; filter: url(#noise);"
-const animationON = animationOFF + " animation: gradient 1s ease infinite;"
-
+let background = assets[1] //Math.round(Math.random()*(assets.length-1))]
+const animationON = "animation: gradient 1s ease infinite;"
 ---
 <style>
-@keyframes gradient {
+@keyframes ping {
 	0% { background-position: 0% 0%; }
     17% { background-position: 0% 1%; }
+    /*
     33% { background-position: 1% 0%; }
 	50% { background-position: 1% 0%; }
     67% { background-position: 1% 1%; }
+    */
     83% { background-position: 1% 0%; }
 	100% { background-position: 0% 1%; }
 }
 </style>
-<div id="landing-screen-container" class="relative grid justify-items-center items-center">
+<div id="landing-screen-container" class="relative grid justify-items-center items-center" h>
 
 <!-- CRT DISPLAY -->
 
 <img src={background.src}
     width={background.width}
     alt="..."
-    class="m-0 rounded-3xl border-8 border-black filter grayscale blur-[2px] z-1"
+    class="m-0 rounded-[50px] filter grayscale blur-[2px] z-1"
 />
 
-<!-- CRT NOISE -->
+<!-- CRT BARS -->
 <div 
-    id="effects_snow" 
-    class={background.class}
-    style={animationOFF}>
-</div>
+    id="effects_crt" 
+    class="absolute z-2 opacity-10 min-w-full min-h-full bg-gradient-to-b from-white to-black bg-[length:5px_5px] animate-ping"    
+></div>
 
 <!--
 <svg class="hidden">

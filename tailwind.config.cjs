@@ -24,6 +24,14 @@ module.exports = {
       },
     },
   },
+  backgroundSize: {
+    'auto': 'auto',
+    'cover': 'cover',
+    'contain': 'contain',
+    '50%': '50%',
+    '16': '4rem',
+    '5': '5px',
+  },
   corePlugins: {
     fontSize: false,
   },

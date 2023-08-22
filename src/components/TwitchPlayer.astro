@@ -1,0 +1,36 @@
+---
+---
+<div 
+    id="twitch-embed" 
+    class="absolute grid justify-items-center items-center min-w-[80%] min-h-[50%] opacity-30 z-5" 
+></div>
+<script type="text/javascript" src="https://embed.twitch.tv/embed/v1.js" ></script>
+<script>
+const chatLayout = true                  // layout option [video|video-and-chat]
+const pixelRangeToSwitchSrcOptions = 799 // minimal pixel range to fire src option replacement when chatLayout=true (TwitchPlayer constraint (800), but may change), (windowDimensions.width+1 to disable)
+const widthRatio = 1.5                 // TwitchPlayer width screen ratio
+const heightRatio = 2                 // TwitchPlayer height screen ratio
+const channel = 'radiojaune'         // your channel
+const webUrls = ["embed.example.com", "othersite.example.com"]   // your network
+const autoplay = true              // Twitch.Embed.VIDEO_READY action
+const verbose = true              // console feedback on|off
+
+embed = new Twitch.Embed("twitch-embed", {
+    width: "100%",
+    height: "100%",
+    channel: channel,
+    layout: "video"+((window.innerWidth>pixelRangeToSwitchSrcOptions && chatLayout)?"-and-chat":""),
+    parent: webUrls
+});
+embed.addEventListener(Twitch.Embed.VIDEO_READY, () => {
+    var player = embed.getPlayer()
+    if (autoplay) player.play()
+    if (verbose) console.log("TwitchPlayer: VIDEO_READY")
+});
+embed.addEventListener(Twitch.Embed.VIDEO_PLAY, () => {
+    document.getElementById("twitch-embed").style.opacity = 1;
+    document.getElementById("calendarContainer").style.display = "none";
+    if (verbose) console.log("TwitchPlayer: VIDEO_PLAY")
+});
+        
+</script>
