@@ -52,7 +52,10 @@ export function TwitchPlayer() {
             'if (embedDiv.getElementsByTagName("iframe")[i].title == "Twitch") {'+
                 ((verbose)?'console.log("attaching resize Events on TwitchPlayer-frame["+i+"]");':'')+
                 'const frameId = i;'+
+                //'embedDiv.getElementsByTagName("iframe")[frameId].width = "100%";'+
+                //'embedDiv.getElementsByTagName("iframe")[frameId].height = "100%";'+
                 'const chatLayout = '+chatLayout+';'+
+                /*
                 'window.addEventListener("resize", () => {'+
                     'embedDiv.getElementsByTagName("iframe")[frameId].width = window.innerWidth/widthRatio;'+
                     'embedDiv.getElementsByTagName("iframe")[frameId].height = (window.innerHeight/heightRatio);'+
@@ -64,13 +67,14 @@ export function TwitchPlayer() {
                         ((verbose)?'console.log("switching player src");':'')+
                     '}'+
                 '});'+
+                */
             '};'+
         '};'+
     '};'
 
     return (
         <>
-            <div id="twitch-embed" class="absolute" style="opacity: 0.3; z-index:5;"></div>
+            <div id="twitch-embed" class="absolute grid justify-items-center items-center min-w-[80%] min-h-[50%]" style="opacity: 0.3; z-index:5;"></div>
             {
                 h(
                     'script',
