@@ -13,12 +13,12 @@ const assets = [
     {
         src: "/calendar/char.jpeg",
         width: 1600,
-        class: "absolute z-2 opacity-10 w-[1600px] h-[900px] bg-gradient-to-b from-white to-black"
+        class: "absolute z-2 opacity-10 min-w-full min-h-full bg-gradient-to-b from-white to-black"
     },
     {
         src: "/calendar/paris.jpg",
         width: 1400,
-        class: "absolute z-2 opacity-10 w-[1400px] h-[930px] bg-gradient-to-b from-white to-black"
+        class: "absolute z-2 opacity-10 min-w-full min-h-full bg-gradient-to-b from-white to-black"
     }
 ]
 
@@ -38,7 +38,7 @@ const animationON = animationOFF + " animation: gradient 1s ease infinite;"
 	100% { background-position: 0% 1%; }
 }
 </style>
-<div id="landing-screen-container" class="grid justify-items-center items-center h-screen">
+<div id="landing-screen-container" class="relative grid justify-items-center items-center">
 
 <!-- CRT DISPLAY -->
 
